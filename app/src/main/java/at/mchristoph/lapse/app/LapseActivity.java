@@ -1,12 +1,13 @@
 package at.mchristoph.lapse.app;
 
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import at.mchristoph.lapse.app.fragments.ConnectionFragment;
 
 public class LapseActivity extends AppCompatActivity {
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,6 +15,12 @@ public class LapseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lapse);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        replaceFragment(new ConnectionFragment());
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -35,5 +42,26 @@ public class LapseActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+
+        if (count == 0){
+            super.onBackPressed();
+        }else{
+            getSupportFragmentManager().popBackStack();
+        }
+
+        super.onBackPressed();
+    }
+
+    public void replaceFragment(Fragment frgmt){
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, frgmt)
+                .addToBackStack(null)
+                .commit();
     }
 }

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import at.mchristoph.lapse.app.R;
-import at.mchristoph.lapse.app.ServerDevice;
+import at.mchristoph.lapse.app.models.ServerDevice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +33,11 @@ public class DeviceListAdapter extends BaseAdapter {
 
     public void addDevice(ServerDevice device) {
         mDeviceList.add(device);
+        notifyDataSetChanged();
+    }
+
+    public void addDevice(List<ServerDevice> device){
+        mDeviceList.addAll(device);
         notifyDataSetChanged();
     }
 

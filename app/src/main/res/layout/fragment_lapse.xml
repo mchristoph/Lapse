@@ -1,42 +1,58 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                tools:context=".LapseActivityFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              tools:context="at.mchristoph.lapse.app.fragments.LapseFragment" android:orientation="vertical"
+              android:padding="10dp">
 
 
-        <com.github.jorgecastilloprz.FABProgressCircle
-                android:id="@+id/fab_device_search_progress"
-                android:layout_width="225dp"
-                android:layout_height="225dp"
-                app:arcWidth="38dp"
-                app:roundedStroke="false" android:layout_centerVertical="true" android:layout_centerHorizontal="true">
-            <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/fab_device_search"
-                    android:layout_width="125dp"
-                    android:layout_height="125dp"
-                    android:src="@drawable/abc_ic_search_api_mtrl_alpha"
-                    app:borderWidth="0dp"
-                    app:elevation="4dp"
-            />
-        </com.github.jorgecastilloprz.FABProgressCircle>
-
-    <android.support.v4.widget.SwipeRefreshLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/lv_refresh"
-            android:visibility="gone"
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="FPS"
+            android:id="@+id/textView"/>
+    <EditText
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        <ListView
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/editText" android:text="24"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Time"
+            android:id="@+id/textView2"/>
+    <LinearLayout android:layout_width="wrap_content" android:orientation="horizontal" android:layout_height="wrap_content"
+                  android:layout_gravity="center">
+        <NumberPicker
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/lv_devices"
-                android:visibility="visible" android:layout_alignTop="@+id/fab_device_search"
-                android:layout_alignParentLeft="true" android:layout_alignParentStart="true"/>
-    </android.support.v4.widget.SwipeRefreshLayout>
+                android:id="@+id/numberPicker1" android:layout_gravity="center_horizontal"
+                android:gravity="center_vertical"/>
+        <NumberPicker
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/numberPicker2" android:layout_gravity="center_horizontal"/>
+        <NumberPicker
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/numberPicker3" android:layout_gravity="center_horizontal"/>
+    </LinearLayout>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:textAppearance="?android:attr/textAppearanceSmall" android:text="Intervall"
+              android:id="@+id/textView3"/>
+    <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number"
+              android:ems="10" android:id="@+id/editText2" android:text="5"
+              android:layout_gravity="center_horizontal"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:textAppearance="?android:attr/textAppearanceSmall" android:text="Picture Count"
+              android:id="@+id/textView4"/>
+    <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number"
+              android:ems="10" android:id="@+id/editText3"/>
 
-</RelativeLayout>
+
+</LinearLayout>

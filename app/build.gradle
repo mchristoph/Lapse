@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'com.android.tools.build:gradle:1.5.0'
     }
 }
 apply plugin: 'com.android.application'
@@ -17,7 +17,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "at.mchristoph.lapse.app"
+        applicationId   "at.mchristoph.lapse.app"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1

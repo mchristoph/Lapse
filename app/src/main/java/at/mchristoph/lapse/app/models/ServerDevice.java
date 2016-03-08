@@ -2,9 +2,13 @@
  * Copyright 2014 Sony Corporation
  */
 
-package at.mchristoph.lapse.app;
+package at.mchristoph.lapse.app.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
+import at.mchristoph.lapse.app.SimpleHttpClient;
+import at.mchristoph.lapse.app.XmlElement;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,100 +18,34 @@ import java.util.List;
 /**
  * A server device description class.
  */
-public final class ServerDevice {
-
+public final class ServerDevice implements Parcelable{
+    //region Fields
     private static final String TAG = ServerDevice.class.getSimpleName();
-
-    /**
-     * Camera Remote API service (category). For example, "camera", "guide" and
-     * so on. "Action List URL" is API request target URL of each service.
-     */
-    public static class ApiService {
-        private String mName;
-
-        private String mActionListUrl;
-
-        /**
-         * Constructor
-         * 
-         * @param name category name
-         * @param actionListUrl action list URL of the category
-         */
-        public ApiService(String name, String actionListUrl) {
-            mName = name;
-            mActionListUrl = actionListUrl;
-        }
-
-        /**
-         * Returns the category name.
-         * 
-         * @return category name.
-         */
-        public String getName() {
-            return mName;
-        }
-
-        /**
-         * Sets a category name.
-         * 
-         * @param name category name
-         */
-        public void setName(String name) {
-            this.mName = name;
-        }
-
-        /**
-         * Returns the action list URL of the category.
-         * 
-         * @return action list URL
-         */
-        public String getActionListUrl() {
-            return mActionListUrl;
-        }
-
-        /**
-         * Sets an action list URL of the category.
-         * 
-         * @param actionListUrl action list URL of the category
-         */
-        public void setActionListUrl(String actionListUrl) {
-            this.mActionListUrl = actionListUrl;
-        }
-
-        /**
-         * Returns the endpoint URL of the category.
-         * 
-         * @return endpoint URL
-         */
-        public String getEndpointUrl() {
-            String url = null;
-            if (mActionListUrl == null || mName == null) {
-                url = null;
-            } else if (mActionListUrl.endsWith("/")) {
-                url = mActionListUrl + mName;
-            } else {
-                url = mActionListUrl + "/" + mName;
-            }
-            return url;
-        }
-    }
-
     private String mDDUrl;
-
     private String mFriendlyName;
-
     private String mModelName;
-
     private String mUDN;
-
     private String mIconUrl;
-
     private final List<ApiService> mApiServices;
+    //endregion
 
-    private ServerDevice() {
+    //region Constructor
+    public ServerDevice() {
         mApiServices = new ArrayList<ApiService>();
     }
 
+    protected ServerDevice(Parcel in) {
+        this();
+
+        mDDUrl = in.readString();
+        mFriendlyName = in.readString();
+        mModelName = in.readString();
+        mUDN = in.readString();
+        mIconUrl = in.readString();
+    }
+    //endregion
+
+    //region Getter/Setter
     /**
      * Returns URL of Device Description XML
      * 
@@ -221,7 +159,9 @@ public final class ServerDevice {
         ApiService service = new ApiService(name, actionUrl);
         mApiServices.add(service);
     }
+    //endregion
 
+    //region Helpermethods
     /**
      * Fetches device description xml file from server and parses it.
      * 
@@ -313,5 +253,108 @@ public final class ServerDevice {
 
         String host = url.substring(i + 3, j);
         return host;
+    }
+    //endregion
+
+    //region Parceable
+    public static final Creator<ServerDevice> CREATOR = new Creator<ServerDevice>() {
+        @Override
+        public ServerDevice createFromParcel(Parcel in) {
+            return new ServerDevice(in);
+        }
+
+        @Override
+        public ServerDevice[] newArray(int size) {
+            return new ServerDevice[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(mDDUrl);
+        parcel.writeString(mFriendlyName);
+        parcel.writeString(mModelName);
+        parcel.writeString(mUDN);
+        parcel.writeString(mIconUrl);
+    }
+    //endregion
+
+    /**
+     * Camera Remote API service (category). For example, "camera", "guide" and
+     * so on. "Action List URL" is API request target URL of each service.
+     */
+    public static class ApiService {
+        private String mName;
+
+        private String mActionListUrl;
+
+        /**
+         * Constructor
+         *
+         * @param name category name
+         * @param actionListUrl action list URL of the category
+         */
+        public ApiService(String name, String actionListUrl) {
+            mName = name;
+            mActionListUrl = actionListUrl;
+        }
+
+        /**
+         * Returns the category name.
+         *
+         * @return category name.
+         */
+        public String getName() {
+            return mName;
+        }
+
+        /**
+         * Sets a category name.
+         *
+         * @param name category name
+         */
+        public void setName(String name) {
+            this.mName = name;
+        }
+
+        /**
+         * Returns the action list URL of the category.
+         *
+         * @return action list URL
+         */
+        public String getActionListUrl() {
+            return mActionListUrl;
+        }
+
+        /**
+         * Sets an action list URL of the category.
+         *
+         * @param actionListUrl action list URL of the category
+         */
+        public void setActionListUrl(String actionListUrl) {
+            this.mActionListUrl = actionListUrl;
+        }
+
+        /**
+         * Returns the endpoint URL of the category.
+         *
+         * @return endpoint URL
+         */
+        public String getEndpointUrl() {
+            String url = null;
+            if (mActionListUrl == null || mName == null) {
+                url = null;
+            } else if (mActionListUrl.endsWith("/")) {
+                url = mActionListUrl + mName;
+            } else {
+                url = mActionListUrl + "/" + mName;
+            }
+            return url;
+        }
     }
 }
