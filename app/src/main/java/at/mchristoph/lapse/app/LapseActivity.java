@@ -5,8 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import at.mchristoph.lapse.app.fragments.ConnectionFragment;
-import at.mchristoph.lapse.app.fragments.LapseFragment;
+import at.mchristoph.lapse.app.fragments.LapseSettingsFragment;
 
 public class LapseActivity extends AppCompatActivity {
 
@@ -20,7 +19,7 @@ public class LapseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        replaceFragment(new LapseFragment());
+        replaceFragment(new LapseSettingsFragment());
     }
 
     @Override

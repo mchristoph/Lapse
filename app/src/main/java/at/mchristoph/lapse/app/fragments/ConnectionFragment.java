@@ -62,7 +62,7 @@ public class ConnectionFragment extends Fragment implements LoaderManager.Loader
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
                 ServerDevice device = (ServerDevice) ((ListView)adapterView).getAdapter().getItem(pos);
-                ((LapseActivity)getActivity()).replaceFragment(LapseFragment.newInstance(device));
+                ((LapseActivity)getActivity()).replaceFragment(LapseSettingsFragment.newInstance(device));
             }
         });
 
