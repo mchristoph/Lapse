@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import at.mchristoph.lapse.app.R;
@@ -36,10 +37,10 @@ public class LapseFragment extends Fragment {
     @Bind(R.id.numberPicker1) protected NumberPicker mPickerHours;
     @Bind(R.id.numberPicker2) protected NumberPicker mPickerMinutes;
     @Bind(R.id.numberPicker3) protected NumberPicker mPickerSeconds;
-    @Bind(R.id.editText)      protected TextView     mFps;
-    @Bind(R.id.editText2)     protected TextView     mIntervall;
-    @Bind(R.id.editText3)     protected TextView     mPicCount;
-    @Bind(R.id.editText4)     protected TextView     mShootingLength;
+    @Bind(R.id.editText)      protected EditText     mFps;
+    @Bind(R.id.editText2)     protected EditText     mIntervall;
+    @Bind(R.id.textView5)     protected TextView     mPicCount;
+    @Bind(R.id.textView4)     protected TextView     mShootingLength;
 
     private List<String> hours;
     private List<String> minAndSec;

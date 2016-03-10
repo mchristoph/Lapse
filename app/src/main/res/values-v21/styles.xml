@@ -1,25 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
         <item name="colorPrimaryDark">@color/primary_material_dark</item>
     </style>
 
-    <style name="LapseTheme" parent="AppTheme" >
+    <style name="LapseTheme" parent="AppTheme">
         <item name="android:textColorPrimary">@color/primary_text_white_material_light</item>
         <item name="android:textColorSecondary">@color/secondary_text_material_light</item>
         <item name="android:colorBackground">@color/background_material_light</item>
+        <item name="android:colorButtonNormal">@color/colorButtonNormal</item>
+        <item name="android:navigationBarColor">@color/black</item>
     </style>
-
-    <style name="LapseText" parent="@android:style/TextAppearance.Small">
-        <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/primary_text_material_light</item>
-    </style>
-
-    <style name="LapsePicker" parent="@style/LapseTheme">
-        <item name="android:textColorPrimary">@color/primary_text_material_light</item>
-    </style>
-
-
 </resources>
