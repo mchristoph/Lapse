@@ -78,10 +78,10 @@
                        android:layout_alignParentStart="true" android:layout_gravity="top|center_horizontal"/>
         </FrameLayout>
             <ImageView
-                    android:layout_width="85dp"
-                    android:layout_height="85dp" android:src="@drawable/ic_start"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp" android:src="@drawable/ic_play_circle"
                     android:id="@+id/start_button" android:layout_gravity="top|center_horizontal"
-                    android:layout_marginTop="9dp"/>
+                    android:layout_marginTop="7dp"/>
             <FrameLayout android:layout_width="wrap_content" android:layout_height="56dp"
                          android:orientation="horizontal" android:layout_weight="1" android:layout_marginTop="-15dp">
             <TextView

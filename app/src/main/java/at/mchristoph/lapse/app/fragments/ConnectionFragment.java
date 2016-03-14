@@ -18,6 +18,8 @@ import at.mchristoph.lapse.app.R;
 import at.mchristoph.lapse.app.adapters.DeviceListAdapter;
 import at.mchristoph.lapse.app.asynctasks.DeviceLoader;
 import at.mchristoph.lapse.app.models.ServerDevice;
+import at.mchristoph.lapse.app.utils.ApiBooleanCallback;
+import at.mchristoph.lapse.app.utils.CameraApiUtil;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -61,8 +63,19 @@ public class ConnectionFragment extends Fragment implements LoaderManager.Loader
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                ServerDevice device = (ServerDevice) ((ListView)adapterView).getAdapter().getItem(pos);
-                ((LapseActivity)getActivity()).replaceFragment(LapseSettingsFragment.newInstance(device));
+                final ServerDevice device = (ServerDevice) ((ListView)adapterView).getAdapter().getItem(pos);
+                CameraApiUtil api = CameraApiUtil.GetInstance(device, getActivity());
+                api.setupConnection(new ApiBooleanCallback() {
+                    @Override
+                    public void onFinished(Boolean bool) {
+                        if (bool){
+                            ((LapseActivity)getActivity()).replaceFragment(LapseSettingsFragment.newInstance(device));
+                        }else{
+                            Toast.makeText(getContext(), "Something went horrible wrong!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
             }
         });
 

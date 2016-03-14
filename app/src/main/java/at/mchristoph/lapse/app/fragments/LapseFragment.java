@@ -9,7 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.facebook.shimmer.ShimmerFrameLayout;
+
+import java.util.concurrent.TimeUnit;
+
 import at.mchristoph.lapse.app.R;
+import at.mchristoph.lapse.app.utils.CameraApiUtil;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -27,8 +35,11 @@ public class LapseFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private Long mTotalTime;
     private Long mIntervall;
+    private CameraApiUtil mApi;
 
     @Bind(R.id.progress_timer) protected ProgressBar mProgressTimer;
+    @Bind(R.id.progress_text ) protected TextView    mProgressText;
+    @Bind(R.id.shimmer_view_container ) protected ShimmerFrameLayout mShimmerView;
 
     /**
      * Use this factory method to create a new instance of
@@ -66,25 +77,49 @@ public class LapseFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_lapse, container, false);
-        ButterKnife.bind(view);
+        ButterKnife.bind(this, view);
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mProgressTimer.setMax(100);
+        //mShimmerView.setBaseAlpha(0.65f);
+        //mShimmerView.setIntensity(0.5f);
+        mShimmerView.setDuration(3250);
+        mShimmerView.setRepeatDelay(1750);
+        mShimmerView.startShimmerAnimation();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        CountDownTimer countDownTimer = new CountDownTimer(mTotalTime, mIntervall) {
-            private boolean warned = false;
-            @Override
-            public void onTick(long millisUntilFinished_) {
-                mProgressTimer.setProgress((int)((mTotalTime-millisUntilFinished_)/mTotalTime*100));
-            }
+        mApi = CameraApiUtil.GetInstance();
 
-            @Override
-            public void onFinish() {
-                // do whatever when the bar is full
-            }
-        }.start();
+        if (mApi != null) {
+            new CountDownTimer(mTotalTime, mIntervall) {
+                @Override
+                public void onTick(long millisUntilFinished_) {
+                    mApi.takePicture();
+                    double test = ((double) millisUntilFinished_ / (double) mTotalTime) * 100f;
+                    mProgressTimer.setProgress((int) test);
+
+                    String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millisUntilFinished_),
+                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished_) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished_)),
+                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished_) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished_)));
+
+                    mProgressText.setText(hms);
+                }
+
+                @Override
+                public void onFinish() {
+                    mProgressTimer.setProgress(0);
+                    mProgressText.setText(0);
+                }
+            }.start();
+        }
     }
 }

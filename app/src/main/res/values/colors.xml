@@ -8,6 +8,7 @@
     <color name="primary_material_light">#114172</color>
     <color name="primary_text_white_material_light">#ffffff</color>
     <color name="primary_text_default_material_light">#3676b9</color>
+    <color name="primary_text_default_material_very_light">#D1E8FF</color>
     <color name="secondary_text_default_material_light">#ce377fca</color>
     <color name="background_material_light">#eaeaea</color>
     <color name="colorButtonNormal">#c6c6c6</color>

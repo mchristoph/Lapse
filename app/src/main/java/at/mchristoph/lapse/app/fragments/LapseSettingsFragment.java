@@ -160,12 +160,18 @@ public class LapseSettingsFragment extends Fragment {
         int second = mPickerSeconds.getValue();
         seconds += second;
 
+        long fps = 0;
+        if (mFps.getText().length() > 0) {
+            fps = Long.parseLong(mFps.getText().toString());
+        }
         long interval = 0;
         if (mIntervall.getText().length() > 0) {
             interval = Long.parseLong(mIntervall.getText().toString());
         }
 
-        ((LapseActivity)getActivity()).replaceFragment(LapseFragment.newInstance(seconds*1000L, interval*1000L));
+        long count = fps * seconds;
+
+        ((LapseActivity)getActivity()).replaceFragment(LapseFragment.newInstance(count * interval * 1000L, interval*1000L));
     }
 
     private void Calculate(){

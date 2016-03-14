@@ -5,9 +5,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import at.mchristoph.lapse.app.fragments.ConnectionFragment;
 import at.mchristoph.lapse.app.fragments.LapseSettingsFragment;
+import at.mchristoph.lapse.app.utils.CameraApiUtil;
 
 public class LapseActivity extends AppCompatActivity {
+    private CameraApiUtil mApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

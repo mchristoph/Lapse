@@ -1,12 +1,84 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="at.mchristoph.lapse.app.fragments.LapseFragment">
+             tools:context="at.mchristoph.lapse.app.fragments.LapseFragment"
+    android:orientation="vertical"
+    android:gravity="center">
 
-    <!-- TODO: Update blank fragment layout -->
-    <ProgressBar android:layout_width="185dp" android:layout_height="185dp" android:layout_gravity="center"
-                 android:progress="0" android:id="@+id/progress_timer" android:max="100"/>
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_view_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:textAppearance="@style/LapseText"
+            android:textSize="18dp"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="LAPSE IN PROGRESS..."/>
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00:00"
+            android:id="@+id/progress_text"
+            style="@style/LapseText"
+            android:gravity="center"
+            android:textSize="22sp"
+            android:layout_gravity="center" />
 
-</FrameLayout>
+        <ProgressBar
+            android:layout_width="185dp"
+            android:layout_height="185dp"
+            android:layout_gravity="center"
+            android:progress="100"
+            style="@style/LapseCircularProgressBar"
+            android:id="@+id/progress_timer"
+            android:max="100"/>
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="-38dp">
+
+        <ImageView
+            android:layout_width="75dp"
+            android:layout_height="75dp" android:src="@drawable/ic_play_circle"
+            android:id="@+id/start_button"
+            android:layout_gravity="bottom"
+            android:layout_below="@+id/start_button"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="28dp" />
+
+        <ImageView
+            android:layout_width="75dp"
+            android:layout_height="75dp" android:src="@drawable/ic_stop_circle"
+            android:id="@+id/start_button"
+            android:layout_gravity="bottom"
+            android:layout_alignTop="@+id/start_button"
+            android:layout_toRightOf="@+id/start_button"
+            android:layout_toEndOf="@+id/start_button"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp" />
+
+        <ImageView
+            android:layout_width="75dp"
+            android:layout_height="75dp" android:src="@drawable/ic_pause_circle"
+            android:id="@+id/start_button"
+            android:layout_gravity="bottom"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/start_button"
+            android:layout_toEndOf="@+id/start_button"
+            android:layout_marginBottom="28dp" />
+
+    </LinearLayout>
+
+</LinearLayout>
