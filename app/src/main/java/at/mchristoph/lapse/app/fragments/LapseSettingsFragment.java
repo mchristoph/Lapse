@@ -1,28 +1,40 @@
 package at.mchristoph.lapse.app.fragments;
 
 
+import android.content.DialogInterface;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import at.mchristoph.lapse.app.LapseActivity;
 import at.mchristoph.lapse.app.R;
 import at.mchristoph.lapse.app.models.ServerDevice;
+import at.mchristoph.lapse.dao.model.DaoMaster;
+import at.mchristoph.lapse.dao.model.DaoSession;
+import at.mchristoph.lapse.dao.model.LapseSetting;
+import at.mchristoph.lapse.dao.model.LapseSettingDao;
 import butterknife.Bind;
 import butterknife.ButterKnife;
-
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -80,6 +92,7 @@ public class LapseSettingsFragment extends Fragment {
         if (getArguments() != null) {
             mDevice = getArguments().getParcelable(ARG_DEVICE);
         }
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -169,9 +182,9 @@ public class LapseSettingsFragment extends Fragment {
             interval = Long.parseLong(mIntervall.getText().toString());
         }
 
-        long count = fps * seconds;
+        long count = (fps * seconds) + 1;
 
-        ((LapseActivity)getActivity()).replaceFragment(LapseFragment.newInstance(count * interval * 1000L, interval*1000L));
+        ((LapseActivity)getActivity()).replaceFragment(LapseFragment.newInstance(count * interval * 1000L, interval * 1000L));
     }
 
     private void Calculate(){
@@ -202,5 +215,85 @@ public class LapseSettingsFragment extends Fragment {
                 TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
 
         mShootingLength.setText(hms);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_lapse_settings, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_add_preset) {
+            showSaveDialog();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showSaveDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final View dlgView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_add_preset, null);
+        builder.setView(dlgView);
+        builder.setTitle("Add Preset");
+
+        final EditText name = ButterKnife.findById(dlgView, R.id.txt_preset_name);
+        final EditText desc = ButterKnife.findById(dlgView, R.id.txt_preset_description);
+
+        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                addPreset(name.getText().toString(), desc.getText().toString());
+            }
+        });
+
+        builder.create().show();
+    }
+
+    //TODO Sinnvolle Fehlermeldungen
+    private void addPreset(String name, String description){
+        if (name.isEmpty()){
+            return;
+        }
+
+        long seconds = 0;
+
+        int hour = mPickerHours.getValue();
+        seconds += (hour * 3600);
+        int minute = mPickerMinutes.getValue();
+        seconds += (minute * 60);
+        int second = mPickerSeconds.getValue();
+        seconds += second;
+
+        long fps = 0;
+        if (mFps.getText().length() > 0) {
+            fps = Long.parseLong(mFps.getText().toString());
+        }
+        long interval = 0;
+        if (mIntervall.getText().length() > 0) {
+            interval = Long.parseLong(mIntervall.getText().toString());
+        }
+
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(getContext(), "lapse-db", null);
+        SQLiteDatabase db = helper.getWritableDatabase();
+        DaoMaster daoMaster = new DaoMaster(db);
+        DaoSession daoSession = daoMaster.newSession();
+
+        LapseSettingDao dao = daoSession.getLapseSettingDao();
+
+        LapseSetting set = new LapseSetting();
+        set.setName(name);
+        set.setDescription(description);
+        set.setFramerate(fps);
+        set.setInterval(interval);
+        set.setMovie_time(seconds);
+        set.setCreated(new Date());
+
+        dao.insert(set);
     }
 }

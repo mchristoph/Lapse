@@ -1,17 +1,27 @@
 package at.mchristoph.lapse.app;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import at.mchristoph.lapse.app.fragments.ConnectionFragment;
 import at.mchristoph.lapse.app.fragments.LapseSettingsFragment;
+import at.mchristoph.lapse.app.fragments.MenuFragment;
 import at.mchristoph.lapse.app.utils.CameraApiUtil;
 
 public class LapseActivity extends AppCompatActivity {
     private CameraApiUtil mApi;
+    private WifiManager mWifiManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,8 +32,12 @@ public class LapseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        replaceFragment(new MenuFragment());
+    }
 
-        replaceFragment(new LapseSettingsFragment());
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override
@@ -41,9 +55,9 @@ public class LapseActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        /*if (id == R.id.action_settings) {
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
@@ -52,13 +66,11 @@ public class LapseActivity extends AppCompatActivity {
     public void onBackPressed() {
         int count = getSupportFragmentManager().getBackStackEntryCount();
 
-        if (count == 0){
-            super.onBackPressed();
-        }else{
+        if (count > 0){
             getSupportFragmentManager().popBackStack();
+        }else{
+            super.onBackPressed();
         }
-
-        super.onBackPressed();
     }
 
     public void replaceFragment(Fragment frgmt){
@@ -68,4 +80,6 @@ public class LapseActivity extends AppCompatActivity {
                 .addToBackStack(null)
                 .commit();
     }
+
+
 }

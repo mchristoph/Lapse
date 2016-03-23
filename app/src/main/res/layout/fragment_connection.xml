@@ -8,22 +8,14 @@
                 android:paddingBottom="@dimen/activity_vertical_margin"
                 tools:context=".LapseActivityFragment">
 
-
-        <com.github.jorgecastilloprz.FABProgressCircle
-                android:id="@+id/fab_device_search_progress"
-                android:layout_width="225dp"
-                android:layout_height="225dp"
-                app:arcWidth="38dp"
-                app:roundedStroke="false" android:layout_centerVertical="true" android:layout_centerHorizontal="true">
-            <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/fab_device_search"
-                    android:layout_width="125dp"
-                    android:layout_height="125dp"
-                    android:src="@drawable/abc_ic_search_api_mtrl_alpha"
-                    app:borderWidth="0dp"
-                    app:elevation="4dp"
-            />
-        </com.github.jorgecastilloprz.FABProgressCircle>
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:visibility="visible"
+        android:indeterminate="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
     <android.support.v4.widget.SwipeRefreshLayout
             xmlns:android="http://schemas.android.com/apk/res/android"

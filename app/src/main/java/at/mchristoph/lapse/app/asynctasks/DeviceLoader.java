@@ -58,6 +58,7 @@ public class DeviceLoader extends AsyncTaskLoader<List<ServerDevice>> {
             packet = new DatagramPacket(sendData, sendData.length, iAddress);
             // send 3 times
             Log.i(LOG_TAG, "search() Send Datagram packet 3 times.");
+            Thread.sleep(500);
             socket.send(packet);
             Thread.sleep(100);
             socket.send(packet);

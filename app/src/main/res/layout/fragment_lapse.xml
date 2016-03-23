@@ -16,7 +16,9 @@
             android:textAllCaps="true"
             android:textStyle="bold"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:text="LAPSE IN PROGRESS..."/>
+            android:layout_height="wrap_content"
+            android:id="@+id/progress_text"
+            android:text="LAPSE IN PROGRESS..."/>
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <FrameLayout
@@ -27,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="00:00:00"
-            android:id="@+id/progress_text"
+            android:id="@+id/progress_timer_text"
             style="@style/LapseText"
             android:gravity="center"
             android:textSize="22sp"

@@ -4,14 +4,16 @@ package at.mchristoph.lapse.app.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import at.mchristoph.lapse.app.utils.ApiJsonCallback;
+import com.android.volley.VolleyError;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.concurrent.TimeUnit;
@@ -20,6 +22,7 @@ import at.mchristoph.lapse.app.R;
 import at.mchristoph.lapse.app.utils.CameraApiUtil;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import org.json.JSONObject;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,7 +41,8 @@ public class LapseFragment extends Fragment {
     private CameraApiUtil mApi;
 
     @Bind(R.id.progress_timer) protected ProgressBar mProgressTimer;
-    @Bind(R.id.progress_text ) protected TextView    mProgressText;
+    @Bind(R.id.progress_timer_text ) protected TextView mProgressTimerText;
+    @Bind(R.id.progress_text) protected TextView mProgressText;
     @Bind(R.id.shimmer_view_container ) protected ShimmerFrameLayout mShimmerView;
 
     /**
@@ -103,7 +107,18 @@ public class LapseFragment extends Fragment {
             new CountDownTimer(mTotalTime, mIntervall) {
                 @Override
                 public void onTick(long millisUntilFinished_) {
-                    mApi.takePicture();
+                    Log.d("Lapse_Timer", "Tick");
+                    mApi.takePicture(new ApiJsonCallback() {
+                        @Override
+                        public void onSuccess(JSONObject response) {
+                            Log.d("Lapse_Timer", "Sent");
+                        }
+
+                        @Override
+                        public void onFailure(VolleyError error) {
+                            Log.d("Lapse_Timer", error.toString());
+                        }
+                    });
                     double test = ((double) millisUntilFinished_ / (double) mTotalTime) * 100f;
                     mProgressTimer.setProgress((int) test);
 
@@ -111,13 +126,15 @@ public class LapseFragment extends Fragment {
                             TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished_) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished_)),
                             TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished_) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished_)));
 
-                    mProgressText.setText(hms);
+                    mProgressTimerText.setText(hms);
                 }
 
                 @Override
                 public void onFinish() {
                     mProgressTimer.setProgress(0);
-                    mProgressText.setText(0);
+                    mProgressTimerText.setText(String.format("%02d:%02d:%02d", 0, 0, 0));
+                    mShimmerView.stopShimmerAnimation();
+                    mProgressText.setText("LAPSE FINISHED!");
                 }
             }.start();
         }

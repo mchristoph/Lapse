@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Lapse.iml" filepath="$PROJECT_DIR$/Lapse.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lapsedaogenerator/lapsedaogenerator.iml" filepath="$PROJECT_DIR$/lapsedaogenerator/lapsedaogenerator.iml" />
     </modules>
   </component>
 </project>

@@ -34,9 +34,11 @@ public class CameraApiUtil {
     private static CameraApiUtil mInstance;
     private RequestQueue mRequestQueue;
     private Context mCtx;
-    // API server device you want to send requests.
+
     private ServerDevice mDevice;
     private long mRequestId;
+    private boolean mConnected;
+    private String mWifiName;
 
     private final Set<String> mSupportedApiSet = new HashSet<String>();
     private final Set<String> mAvailableCameraApiSet = new HashSet<String>();
@@ -46,6 +48,8 @@ public class CameraApiUtil {
         mCtx = ctx;
         mRequestQueue = Volley.newRequestQueue(mCtx);
         mRequestId = 1;
+        mConnected = false;
+        mWifiName = null;
     }
 
     public static CameraApiUtil GetInstance(){
@@ -71,13 +75,17 @@ public class CameraApiUtil {
         return mRequestId++;
     }
 
-    public void takePicture(){
+    public boolean isConnected(){ return mConnected; }
+
+    public String getWifiName() { return mWifiName; }
+
+    public void takePicture(final ApiJsonCallback cb){
         try {
             JSONObject requestJson =
                     new JSONObject().put("method", "actTakePicture").put("params", new JSONArray()) //
                             .put("id", requestID()).put("version", "1.0");
 
-            submitRequest(requestJson);
+            submitRequest(requestJson, cb);
         }catch (JSONException e){
 
         }
@@ -97,8 +105,10 @@ public class CameraApiUtil {
         }
     }
 
-    public void setupConnection(final ApiBooleanCallback cb){
+    public void setupConnection(final ApiBooleanCallback cb, final String wifiName){
         Log.d(LOG_TAG, "SetupConection called.");
+
+        mWifiName = null;
 
         getCameraMethodTypes(new ApiJsonCallback() {
             @Override
@@ -112,9 +122,9 @@ public class CameraApiUtil {
                             loadSupportedApiList(response);
 
                             if (!isApiSupported("setCameraFunction")) {
-                                openConnection(cb);
+                                openConnection(cb, wifiName);
                             } else if (!isApiSupported("getEvent")) {
-                                openConnection(cb);
+                                openConnection(cb, wifiName);
                             } else {
                                 getEvent(new ApiJsonCallback() {
                                     @Override
@@ -133,7 +143,7 @@ public class CameraApiUtil {
 
                                             if (isShootingStatus(cameraStatus)) {
                                                 Log.d(LOG_TAG, "camera function is Remote Shooting.");
-                                                openConnection(cb);
+                                                openConnection(cb, wifiName);
                                             } else {
                                                 // set Listener
                                                 //startOpenConnectionAfterChangeCameraState();
@@ -171,7 +181,7 @@ public class CameraApiUtil {
         });
     }
 
-    private void openConnection(final ApiBooleanCallback cb){
+    private void openConnection(final ApiBooleanCallback cb, final String wifiName){
         Log.d(LOG_TAG, "openConnection() called.");
 
         getAvailableApiList(new ApiJsonCallback() {
@@ -198,18 +208,21 @@ public class CameraApiUtil {
                     startRecMode(new ApiJsonCallback() {
                         @Override
                         public void onSuccess(JSONObject response) {
+                            mConnected = true;
+                            mWifiName = wifiName;
+                            Log.d(LOG_TAG, "openConnection() successful.");
+                            cb.onFinished(true);
                             loadAvailableCameraApiList(response);
                         }
 
                         @Override
                         public void onFailure(VolleyError error) {
-
+                            mConnected = false;
+                            mWifiName = null;
+                            cb.onFinished(false);
                         }
                     });
                 }
-
-                Log.d(LOG_TAG, "openConnection() successful.");
-                cb.onFinished(true);
             }
 
             @Override
