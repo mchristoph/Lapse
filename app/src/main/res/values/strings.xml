@@ -1,8 +1,35 @@
 <resources>
     <string name="app_name">Lapse</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--Connection-->
+    <string name="connection_info_no_wifi">No devices found.</string>
+    <string name="connection_info_enable_wifi">Enabling wifi.</string>
+    <string name="connection_info_connect_wifi">Attempt to connect to wifi.</string>
+    <string name="connection_info_connected_to">Successfully connected to wifi %s.</string>
+    <string name="connection_info_connect_camera">Attempt to get camera information.</string>
+    <string name="connection_info_setup_connection">Initialize connection.</string>
+    <string name="connection_info_connection_successful">Connection successfully.</string>
+    <string name="connection_info_connection_error">There was an error connecting to device.</string>
+
+
+    <!--fragment_lapse_settings-->
+    <string name="text_view_framerate">Target Framerate</string>
+    <string name="text_view_interval">Shoot Interval (s)</string>
+    <string name="text_view_movie_time">Target Movie Time</string>
+
+    <!--Add Presets-->
+    <string name="add_preset_dialog_title">Add Preset</string>
+    <string name="add_preset_dialog_positive">Save Preset</string>
+    <string name="add_preset_dialog_negative">Cancel</string>
+    <string name="add_preset_success">Preset saved successfully.</string>
+    <string name="add_preset_safe_error">There was an unknow error saving the preset.</string>
+    <string name="add_preset_no_name_error">You must enter a name for the preset.</string>
+
+    <!--Generic values-->
+    <string name="generic_no_items">No items available.</string>
+    <string name="generic_fps">FPS</string>
+    <string name="generic_interval">Interval</string>
+    <string name="generic_movie_time">Movie Time</string>
+    <string name="generic_location">Shot location</string>
+    <string name="generic_time_string_format" formatted="false">%02d:%02d:%02d</string>
 </resources>

@@ -12,38 +12,35 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import at.mchristoph.lapse.app.R;
-import at.mchristoph.lapse.dao.model.LapseSetting;
+import at.mchristoph.lapse.dao.model.LapseHistory;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
  * Created by Xris on 23.03.2016.
  */
-public class PresetRecyclerViewAdapter extends RecyclerView.Adapter<PresetRecyclerViewAdapter.ViewHolder> {
-    private List<LapseSetting> mItems;
+public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecyclerViewAdapter.ViewHolder>{
+    List<LapseHistory> mItems;
 
-    public PresetRecyclerViewAdapter(){
+    public HistoryRecyclerViewAdapter(){
         mItems = new ArrayList<>();
     }
 
-    public PresetRecyclerViewAdapter(List<LapseSetting> items){
+    public HistoryRecyclerViewAdapter(List<LapseHistory> items){
         mItems = items;
     }
 
     @Override
-    public PresetRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public HistoryRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_preset, null);
+                .inflate(R.layout.list_item_history, null);
 
-        return new PresetRecyclerViewAdapter.ViewHolder(view, parent.getContext());
+        return new HistoryRecyclerViewAdapter.ViewHolder(view, parent.getContext());
     }
 
     @Override
-    public void onBindViewHolder(PresetRecyclerViewAdapter.ViewHolder holder, int position) {
-        holder.name.setText(mItems.get(position).getName());
-        holder.description.setText(mItems.get(position).getDescription());
+    public void onBindViewHolder(ViewHolder holder, int position) {
         holder.created.setText(mItems.get(position).getCreated().toString());
-
         holder.fps.setText(holder.fpsLabel + String.valueOf(mItems.get(position).getFramerate()));
         holder.interval.setText(holder.intervalLabel + String.valueOf(mItems.get(position).getInterval()));
 
@@ -52,6 +49,8 @@ public class PresetRecyclerViewAdapter extends RecyclerView.Adapter<PresetRecycl
                 TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
                 TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
         holder.time.setText(holder.movieTimeLabel + hms);
+
+        holder.location.setText(holder.locationLabel + mItems.get(position).getLocation());
     }
 
     @Override
@@ -59,36 +58,17 @@ public class PresetRecyclerViewAdapter extends RecyclerView.Adapter<PresetRecycl
         return mItems.size();
     }
 
-    public void addItem(LapseSetting set){
-        mItems.add(set);
-    }
-    public void addItem(int pos, LapseSetting set){
-        mItems.add(pos, set);
-        notifyItemInserted(pos);
-        notifyItemRangeChanged(pos, getItemCount());
-    }
-
-    public void remove(int pos){
-        mItems.remove(pos);
-        notifyItemRemoved(pos);
-        notifyItemRangeChanged(pos, getItemCount());
-    }
-
-    public LapseSetting getItem(int pos){
-        return mItems.get(pos);
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        @Bind(R.id.list_item_preset_name) TextView name;
-        @Bind(R.id.list_item_preset_desc) TextView description;
-        @Bind(R.id.list_item_preset_created) TextView created;
-        @Bind(R.id.list_item_preset_fps) TextView fps;
-        @Bind(R.id.list_item_preset_interval) TextView interval;
-        @Bind(R.id.list_item_preset_time) TextView time;
+    public static class ViewHolder extends RecyclerView.ViewHolder{
+        @Bind(R.id.list_item_history_created) TextView created;
+        @Bind(R.id.list_item_history_fps) TextView fps;
+        @Bind(R.id.list_item_history_interval) TextView interval;
+        @Bind(R.id.list_item_history_time) TextView time;
+        @Bind(R.id.list_item_history_location) TextView location;
 
         public final String fpsLabel;
         public final String intervalLabel;
         public final String movieTimeLabel;
+        public final String locationLabel;
         public final String timeStampFormat;
 
         public ViewHolder(View view) {
@@ -97,6 +77,7 @@ public class PresetRecyclerViewAdapter extends RecyclerView.Adapter<PresetRecycl
             fpsLabel = "FPS: ";
             intervalLabel = "Interval: ";
             movieTimeLabel = "Movie Time: ";
+            locationLabel = "Shot location: ";
             timeStampFormat = "%02d:%02d:%02d";
         }
 
@@ -106,8 +87,9 @@ public class PresetRecyclerViewAdapter extends RecyclerView.Adapter<PresetRecycl
             fpsLabel = ctx.getString(R.string.generic_fps) + ": ";
             intervalLabel = ctx.getString(R.string.generic_interval) + ": ";
             movieTimeLabel = ctx.getString(R.string.generic_movie_time) + ": ";
+            locationLabel = ctx.getString(R.string.generic_location) + ": ";
             timeStampFormat = ctx.getString(R.string.generic_time_string_format);
         }
     }
-}
 
+}

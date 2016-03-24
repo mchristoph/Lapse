@@ -10,6 +10,7 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -18,12 +19,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
@@ -39,19 +41,19 @@ import at.mchristoph.lapse.app.utils.CameraApiUtil;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-/**
- * A placeholder fragment containing a simple view.
- */
-
 //TODO Check if already connected to device
 //TODO Check if connection is lost
 //TODO Check if already connected to device-wifi but openConnection not called
+//TODO Reload display progressbar again and hide list
 public class ConnectionFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<ServerDevice>>{
     private DeviceListAdapter mDeviceList;
 
     @Bind(R.id.lv_devices) protected ListView mListView;
     @Bind(R.id.progress_bar) protected ProgressBar mProgressBar;
     @Bind(R.id.lv_refresh) protected SwipeRefreshLayout mLvRefresh;
+    @Bind(R.id.txt_device_info) protected TextView mTxtDeviceInfo;
+    @Bind(R.id.img_device_info) protected ImageView mImgDeviceInfo;
+
     private WifiManager mWifiManager;
     private WifiListAdapter mWifiAdapter;
     private BroadcastReceiver mScanResultReciever;
@@ -85,12 +87,23 @@ public class ConnectionFragment extends Fragment implements LoaderManager.Loader
                 mWifiAdapter.clearDevices();
                 mWifiAdapter.addDevice(mWifiManager.getScanResults());
 
-                mLvRefresh.setEnabled(true);
-                mProgressBar.setVisibility(View.GONE);
-                mLvRefresh.setRefreshing(false);
-                mLvRefresh.setVisibility(View.VISIBLE);
+                if (mWifiAdapter.getCount() == 0){
+                    mTxtDeviceInfo.setVisibility(View.VISIBLE);
+                    mImgDeviceInfo.setVisibility(View.VISIBLE);
 
-                //TODO If no result show info text
+                    mLvRefresh.setEnabled(true);
+                    mProgressBar.setVisibility(View.GONE);
+                    mLvRefresh.setRefreshing(false);
+                    mLvRefresh.setVisibility(View.VISIBLE);
+                }else{
+                    mTxtDeviceInfo.setVisibility(View.GONE);
+                    mImgDeviceInfo.setVisibility(View.GONE);
+
+                    mLvRefresh.setEnabled(true);
+                    mProgressBar.setVisibility(View.GONE);
+                    mLvRefresh.setRefreshing(false);
+                    mLvRefresh.setVisibility(View.VISIBLE);
+                }
             }
         };
 
@@ -101,11 +114,10 @@ public class ConnectionFragment extends Fragment implements LoaderManager.Loader
                 if (netInfo.isConnected()) {
                     if (mWifiManager.getConnectionInfo().getSSID().equals("\"" + mSSID + "\"") && mConnecting == true) {
                         Log.d("IsConnected", mWifiManager.getConnectionInfo().getSSID());
+                        Toast.makeText(getContext(), String.format(getString(R.string.connection_info_connect_wifi), mSSID) , Toast.LENGTH_SHORT).show();
                         mConnecting = false;
                         ConnectDevice();
                     }
-                } else {
-                    Log.d("NotConnected", "k");
                 }
             }
         };
@@ -119,11 +131,7 @@ public class ConnectionFragment extends Fragment implements LoaderManager.Loader
 
         if (mWifiManager.isWifiEnabled() == false)
         {
-            // If wifi disabled then enable it
-            //TODO Sinnvoller Text
-            Toast.makeText(getActivity(), "wifi is disabled..making it enabled",
-                    Toast.LENGTH_LONG).show();
-
+            Snackbar.make(ButterKnife.findById(getActivity(), android.R.id.content), R.string.connection_info_enable_wifi, Snackbar.LENGTH_LONG).show();
             mWifiManager.setWifiEnabled(true);
         }
 
@@ -133,8 +141,13 @@ public class ConnectionFragment extends Fragment implements LoaderManager.Loader
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                final ScanResult device = (ScanResult) ((ListView) adapterView).getAdapter().getItem(pos);
+                ProgressBar progress = ButterKnife.findById(view, R.id.progress_bar_connect);
+                ImageView img = ButterKnife.findById(view, R.id.image_view_connect);
 
+                img.setVisibility(View.GONE);
+                progress.setVisibility(View.VISIBLE);
+
+                final ScanResult device = (ScanResult) ((ListView) adapterView).getAdapter().getItem(pos);
                 ConnectWifi(device);
             }
         });
@@ -157,6 +170,7 @@ public class ConnectionFragment extends Fragment implements LoaderManager.Loader
     }
 
     private void ConnectWifi(final ScanResult device) {
+        Toast.makeText(getContext(), R.string.connection_info_connect_wifi, Toast.LENGTH_SHORT).show();
         mConnecting = true;
 
         // TODO Add wifi from device, if not already in list
@@ -176,9 +190,6 @@ public class ConnectionFragment extends Fragment implements LoaderManager.Loader
                 break;
             }
         }
-
-        //TODO Check if connected!
-        //((LapseActivity)getActivity()).replaceFragment(new MenuFragment());
     }
 
     private void ConnectDevice(){
@@ -199,13 +210,14 @@ public class ConnectionFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public Loader<List<ServerDevice>> onCreateLoader(int id, Bundle args) {
+        Toast.makeText(getContext(), R.string.connection_info_connect_camera, Toast.LENGTH_SHORT).show();
         return new DeviceLoader(getActivity());
     }
 
     @Override
     public void onLoadFinished(Loader<List<ServerDevice>> loader, final List<ServerDevice> devices) {
         if (devices != null) {
-            Toast.makeText(getActivity(), devices.size() + " Found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.connection_info_setup_connection, Toast.LENGTH_SHORT).show();
 
             if (devices.size() > 0){
                 CameraApiUtil api = CameraApiUtil.GetInstance(devices.get(0), getActivity());
@@ -213,15 +225,16 @@ public class ConnectionFragment extends Fragment implements LoaderManager.Loader
                     @Override
                     public void onFinished(Boolean bool) {
                         if (bool){
+                            Snackbar.make(ButterKnife.findById(getActivity(), android.R.id.content), R.string.connection_info_connection_successful, Snackbar.LENGTH_LONG).show();
                             ((LapseActivity)getActivity()).replaceFragment(new MenuFragment());
                         }else{
-                            Toast.makeText(getContext(), "Something went horrible wrong!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), R.string.connection_info_connection_error, Toast.LENGTH_SHORT).show();
                         }
                     }
                 },  mSSID);
             }
         }else{
-            Toast.makeText(getActivity(), "Nix gefunden", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.connection_info_connection_error, Toast.LENGTH_SHORT).show();
         }
     }
 

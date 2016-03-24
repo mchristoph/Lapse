@@ -1,17 +1,17 @@
 package at.mchristoph.lapse.app.adapters;
 
 import android.content.Context;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import at.mchristoph.lapse.app.R;
-import at.mchristoph.lapse.app.models.ServerDevice;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import at.mchristoph.lapse.app.R;
+import at.mchristoph.lapse.app.models.ServerDevice;
 
 /**
 * Created by Xris on 04.03.2016.
@@ -66,22 +66,10 @@ public class DeviceListAdapter extends BaseAdapter {
 
         TextView textView = (TextView) convertView;
         if (textView == null) {
-            textView = (TextView) mInflater.inflate(R.layout.device_list_item, parent, false);
+            textView = (TextView) mInflater.inflate(R.layout.list_item_device, parent, false);
         }
         ServerDevice device = (ServerDevice) getItem(position);
-        ServerDevice.ApiService apiService = device.getApiService("camera");
-        String endpointUrl = null;
-        if (apiService != null) {
-            endpointUrl = apiService.getEndpointUrl();
-        }
-
-        // Label
-        String htmlLabel =
-                String.format("%s ", device.getFriendlyName()) //
-                        + String.format(//
-                        "<br><small>Endpoint URL:  <font color=\"blue\">%s</font></small>", //
-                        endpointUrl);
-        textView.setText(Html.fromHtml(htmlLabel));
+        textView.setText(device.getFriendlyName());
 
         return textView;
     }

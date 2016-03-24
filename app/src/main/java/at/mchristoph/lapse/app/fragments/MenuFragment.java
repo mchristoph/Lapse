@@ -97,6 +97,12 @@ public class MenuFragment extends Fragment {
         ((LapseActivity)getActivity()).replaceFragment(new PresetsFragment());
     }
 
+    @OnClick(R.id.btn_history)
+    public void OpenHistoryFragment(View view){
+        ((LapseActivity)getActivity()).replaceFragment(new HistoryFragment());
+    }
+
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);

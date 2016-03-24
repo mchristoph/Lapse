@@ -14,55 +14,44 @@
 
     <RelativeLayout
        android:layout_width="match_parent" android:layout_height="wrap_content">
-
-        <!-- item -->
         <TextView
-            android:text=""
-            android:id="@+id/list_item_preset_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="26sp" />
-
-        <TextView
-            android:text=""
-            android:id="@+id/list_item_preset_created"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:layout_above="@+id/list_item_preset_desc"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
-        <TextView
-            android:text=""
-            android:id="@+id/list_item_preset_desc"
+            android:id="@+id/list_item_history_created"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:layout_below="@+id/list_item_preset_name"
+            android:layout_alignParentRight="false"
+            android:layout_alignParentEnd="false" />
+        <TextView
+            android:text=""
+            android:id="@+id/list_item_history_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:maxLines="1"
+            android:minLines="1"
+            android:layout_below="@+id/list_item_history_created"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:maxLines="3"
-            android:minLines="3" />
+            android:layout_alignParentStart="true" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/primary_text_default_material_very_light"
-            android:layout_below="@+id/list_item_preset_desc"
+            android:layout_below="@+id/list_item_history_location"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/list_item_preset_desc"
+            android:layout_below="@+id/list_item_history_location"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:id="@+id/linearLayout3">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/list_item_preset_desc"
+            android:layout_below="@+id/list_item_history_location"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:id="@+id/linearLayout2"
@@ -72,14 +61,14 @@
                 android:src="@drawable/ic_schedule"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/list_item_preset_desc"
+                android:layout_below="@+id/list_item_history_location"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:id="@+id/imageView3"
                 android:layout_gravity="center" />
             <TextView
                 android:text="FPS:"
-                android:id="@+id/list_item_preset_fps"
+                android:id="@+id/list_item_history_fps"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/imageView3"
@@ -92,7 +81,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/list_item_preset_desc"
+            android:layout_below="@+id/list_item_history_location"
             android:layout_toRightOf="@+id/linearLayout2"
             android:layout_toLeftOf="@+id/linearLayout"
             android:layout_toStartOf="@+id/linearLayout"
@@ -102,12 +91,12 @@
                 android:src="@drawable/ic_timer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/list_item_preset_desc"
+                android:layout_below="@+id/list_item_history_location"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_gravity="center" />
             <TextView
-                android:id="@+id/list_item_preset_interval"
+                android:id="@+id/list_item_history_interval"
                 android:text="Intervall: "
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -134,7 +123,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_gravity="center" />
             <TextView
-                android:id="@+id/list_item_preset_time"
+                android:id="@+id/list_item_history_time"
                 android:text="Movie Time: 00:00:00"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

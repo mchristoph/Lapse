@@ -17,51 +17,60 @@
             android:textAppearance="@style/LapseText"
             android:drawableStart="@drawable/ic_schedule"
             android:drawableLeft="@drawable/ic_schedule"
-            android:text="Target Framerate"
-            android:id="@+id/textView" android:gravity="center_vertical"/>
+            android:text="@string/text_view_framerate"
+            android:gravity="center_vertical"/>
     <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
             android:ems="10"
             android:textColor="#d2131313"
-            android:id="@+id/editText" android:text="24" android:layout_marginBottom="18dp"/>
+            android:id="@+id/txt_target_framerate" android:text="24" android:layout_marginBottom="18dp"/>
 
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
               android:drawableStart="@drawable/ic_timer"
               android:drawableLeft="@drawable/ic_timer"
-              android:textAppearance="@style/LapseText" android:text="Shoot Intervall (s)"
-              android:id="@+id/textView3" android:gravity="center_vertical"/>
+              android:textAppearance="@style/LapseText" android:text="@string/text_view_interval"
+              android:gravity="center_vertical"/>
 
-    <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number"
-              android:ems="10" android:id="@+id/editText2" android:text="5" android:textColor="#d2131313"
-              android:layout_marginBottom="18dp"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/txt_interval"
+        android:text="5"
+        android:textColor="#d2131313"
+        android:layout_marginBottom="18dp"/>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_av_timer"
             android:drawableLeft="@drawable/ic_av_timer"
             android:textAppearance="@style/LapseText"
-            android:text="Target Movie Time"
-            android:id="@+id/textView2" android:layout_marginBottom="10dp" android:gravity="center_vertical"/>
-    <LinearLayout android:layout_width="wrap_content" android:orientation="horizontal" android:layout_height="wrap_content"
-                  android:layout_gravity="center">
+            android:text="@string/text_view_movie_time"
+            android:layout_marginBottom="10dp" android:gravity="center_vertical"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
         <NumberPicker
                 android:theme="@style/LapsePicker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/numberPicker1" android:layout_gravity="center_horizontal"
+                android:id="@+id/np_time_hours" android:layout_gravity="center_horizontal"
                 android:gravity="center_vertical" />
         <NumberPicker
             android:theme="@style/LapsePicker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/numberPicker2" android:layout_gravity="center_horizontal"/>
+                android:id="@+id/np_time__minutes" android:layout_gravity="center_horizontal"/>
         <NumberPicker
             android:theme="@style/LapsePicker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/numberPicker3" android:layout_gravity="center_horizontal"/>
+                android:id="@+id/np_times_seconds" android:layout_gravity="center_horizontal"/>
     </LinearLayout>
 
         <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"

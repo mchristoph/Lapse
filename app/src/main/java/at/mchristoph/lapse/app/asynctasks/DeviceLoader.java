@@ -3,6 +3,9 @@ package at.mchristoph.lapse.app.asynctasks;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
+import android.widget.Toast;
+
+import at.mchristoph.lapse.app.R;
 import at.mchristoph.lapse.app.models.ServerDevice;
 
 import java.io.IOException;

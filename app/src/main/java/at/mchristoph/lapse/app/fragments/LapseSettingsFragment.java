@@ -1,11 +1,18 @@
 package at.mchristoph.lapse.app.fragments;
 
-
+import android.Manifest;
 import android.content.DialogInterface;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.os.ResultReceiver;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,42 +28,61 @@ import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import at.mchristoph.lapse.app.LapseActivity;
+import at.mchristoph.lapse.app.LapseApplication;
 import at.mchristoph.lapse.app.R;
 import at.mchristoph.lapse.app.models.ServerDevice;
-import at.mchristoph.lapse.dao.model.DaoMaster;
-import at.mchristoph.lapse.dao.model.DaoSession;
+import at.mchristoph.lapse.app.services.FetchAddressIntentService;
+import at.mchristoph.lapse.dao.model.LapseHistory;
+import at.mchristoph.lapse.dao.model.LapseHistoryDao;
 import at.mchristoph.lapse.dao.model.LapseSetting;
 import at.mchristoph.lapse.dao.model.LapseSettingDao;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.greenrobot.dao.DaoException;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link LapseSettingsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LapseSettingsFragment extends Fragment {
+public class LapseSettingsFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String ARG_DEVICE = "arg_connected_device";
 
     private ServerDevice mDevice;
+    private AddressResultReceiver mResultReceiver;
+    private GoogleApiClient mGoogleApiClient;
 
-    @Bind(R.id.numberPicker1) protected NumberPicker mPickerHours;
-    @Bind(R.id.numberPicker2) protected NumberPicker mPickerMinutes;
-    @Bind(R.id.numberPicker3) protected NumberPicker mPickerSeconds;
-    @Bind(R.id.editText)      protected EditText     mFps;
-    @Bind(R.id.editText2)     protected EditText     mIntervall;
-    @Bind(R.id.textView5)     protected TextView     mPicCount;
-    @Bind(R.id.textView4)     protected TextView     mShootingLength;
-    @Bind(R.id.start_button)  protected ImageView    mStartButton;
+    @Bind(R.id.np_time_hours)
+    protected NumberPicker mPickerHours;
+    @Bind(R.id.np_time__minutes)
+    protected NumberPicker mPickerMinutes;
+    @Bind(R.id.np_times_seconds)
+    protected NumberPicker mPickerSeconds;
+    @Bind(R.id.txt_target_framerate)
+    protected EditText mFps;
+    @Bind(R.id.txt_interval)
+    protected EditText mIntervall;
+    @Bind(R.id.textView5)
+    protected TextView mPicCount;
+    @Bind(R.id.textView4)
+    protected TextView mShootingLength;
+    @Bind(R.id.start_button)
+    protected ImageView mStartButton;
 
     private List<String> hours;
     private List<String> minAndSec;
+    private Location mLastLocation;
+    private String mCurrentLocation;
 
     /**
      * Use this factory method to create a new instance of
@@ -77,11 +103,11 @@ public class LapseSettingsFragment extends Fragment {
         hours = new ArrayList<>();
         minAndSec = new ArrayList<>();
         // Required empty public constructor
-        for (int i = 0; i <= 24; i++){
+        for (int i = 0; i <= 24; i++) {
             hours.add(String.format("%d", i));
         }
 
-        for (int i = 0; i <= 59; i++){
+        for (int i = 0; i <= 59; i++) {
             minAndSec.add(String.format("%d", i));
         }
     }
@@ -93,6 +119,24 @@ public class LapseSettingsFragment extends Fragment {
             mDevice = getArguments().getParcelable(ARG_DEVICE);
         }
         setHasOptionsMenu(true);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
     }
 
     @Override
@@ -163,7 +207,7 @@ public class LapseSettingsFragment extends Fragment {
         });
     }
 
-    private void StartTimelapse(){
+    private void StartTimelapse() {
         long seconds = 0;
 
         int hour = mPickerHours.getValue();
@@ -184,10 +228,26 @@ public class LapseSettingsFragment extends Fragment {
 
         long count = (fps * seconds) + 1;
 
-        ((LapseActivity)getActivity()).replaceFragment(LapseFragment.newInstance(count * interval * 1000L, interval * 1000L));
+        LapseHistoryDao dao = ((LapseApplication) getActivity().getApplicationContext()).getSession().getLapseHistoryDao();
+
+        long daoCount = dao.count();
+        if (daoCount == 50) {
+            dao.queryBuilder().orderAsc(LapseHistoryDao.Properties.Created).limit(1).buildDelete().executeDeleteWithoutDetachingEntities();
+        }
+
+        LapseHistory history = new LapseHistory();
+        history.setFramerate(fps);
+        history.setInterval(interval);
+        history.setMovieTime(seconds);
+        history.setCreated(new Date());
+        history.setLocation(mCurrentLocation == null ? "" : mCurrentLocation);
+
+        dao.insert(history);
+
+        ((LapseActivity) getActivity()).replaceFragment(LapseFragment.newInstance(count * interval * 1000L, interval * 1000L));
     }
 
-    private void Calculate(){
+    private void Calculate() {
         long seconds = 0;
 
         int hour = mPickerHours.getValue();
@@ -236,16 +296,22 @@ public class LapseSettingsFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void showSaveDialog(){
+    private void showSaveDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final View dlgView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_add_preset, null);
         builder.setView(dlgView);
-        builder.setTitle("Add Preset");
+        builder.setTitle(R.string.add_preset_dialog_title);
 
         final EditText name = ButterKnife.findById(dlgView, R.id.txt_preset_name);
         final EditText desc = ButterKnife.findById(dlgView, R.id.txt_preset_description);
 
-        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.add_preset_dialog_negative, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.setPositiveButton(R.string.add_preset_dialog_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 addPreset(name.getText().toString(), desc.getText().toString());
@@ -255,9 +321,9 @@ public class LapseSettingsFragment extends Fragment {
         builder.create().show();
     }
 
-    //TODO Sinnvolle Fehlermeldungen
-    private void addPreset(String name, String description){
-        if (name.isEmpty()){
+    private void addPreset(String name, String description) {
+        if (name.isEmpty()) {
+            Snackbar.make(ButterKnife.findById(getActivity(), android.R.id.content), R.string.add_preset_no_name_error, Snackbar.LENGTH_LONG).show();
             return;
         }
 
@@ -279,21 +345,87 @@ public class LapseSettingsFragment extends Fragment {
             interval = Long.parseLong(mIntervall.getText().toString());
         }
 
-        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(getContext(), "lapse-db", null);
-        SQLiteDatabase db = helper.getWritableDatabase();
-        DaoMaster daoMaster = new DaoMaster(db);
-        DaoSession daoSession = daoMaster.newSession();
-
-        LapseSettingDao dao = daoSession.getLapseSettingDao();
+        LapseSettingDao dao = ((LapseApplication) getActivity().getApplicationContext()).getSession().getLapseSettingDao();
 
         LapseSetting set = new LapseSetting();
         set.setName(name);
         set.setDescription(description);
         set.setFramerate(fps);
         set.setInterval(interval);
-        set.setMovie_time(seconds);
+        set.setMovieTime(seconds);
         set.setCreated(new Date());
 
-        dao.insert(set);
+        int message = R.string.add_preset_success;
+        try {
+            if (dao.insert(set) <= 0){
+                message = R.string.add_preset_safe_error;
+            }
+        }catch (DaoException e){
+            message = R.string.add_preset_safe_error;
+        }catch (Exception e){
+            message = R.string.add_preset_safe_error;
+        }
+
+        Snackbar.make(ButterKnife.findById(getActivity(), android.R.id.content), message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+
+        if (mLastLocation != null){
+            if (!Geocoder.isPresent()) {
+                mCurrentLocation = "";
+                return;
+            }
+
+
+            Intent intent = new Intent(getContext(), FetchAddressIntentService.class);
+            mResultReceiver = new AddressResultReceiver(new Handler());
+            intent.putExtra(FetchAddressIntentService.RECEIVER, mResultReceiver);
+            intent.putExtra(FetchAddressIntentService.LOCATION_DATA_EXTRA, mLastLocation);
+            getActivity().startService(intent);
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    class AddressResultReceiver extends ResultReceiver {
+        public AddressResultReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            // Display the address string
+            // or an error message sent from the intent service.
+            String mAddressOutput = resultData.getString(FetchAddressIntentService.RESULT_DATA_KEY);
+
+            // Show a toast message if an address was found.
+            if (resultCode == FetchAddressIntentService.SUCCESS_RESULT) {
+                mCurrentLocation = mAddressOutput;
+            }
+        }
     }
 }

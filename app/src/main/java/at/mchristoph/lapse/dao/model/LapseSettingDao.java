@@ -28,7 +28,7 @@ public class LapseSettingDao extends AbstractDao<LapseSetting, Long> {
         public final static Property Description = new Property(2, String.class, "description", false, "DESCRIPTION");
         public final static Property Framerate = new Property(3, long.class, "framerate", false, "FRAMERATE");
         public final static Property Interval = new Property(4, long.class, "interval", false, "INTERVAL");
-        public final static Property Movie_time = new Property(5, long.class, "movie_time", false, "MOVIE_TIME");
+        public final static Property MovieTime = new Property(5, long.class, "movieTime", false, "MOVIE_TIME");
         public final static Property Created = new Property(6, java.util.Date.class, "created", false, "CREATED");
     };
 
@@ -50,7 +50,7 @@ public class LapseSettingDao extends AbstractDao<LapseSetting, Long> {
                 "\"DESCRIPTION\" TEXT," + // 2: description
                 "\"FRAMERATE\" INTEGER NOT NULL ," + // 3: framerate
                 "\"INTERVAL\" INTEGER NOT NULL ," + // 4: interval
-                "\"MOVIE_TIME\" INTEGER NOT NULL ," + // 5: movie_time
+                "\"MOVIE_TIME\" INTEGER NOT NULL ," + // 5: movieTime
                 "\"CREATED\" INTEGER NOT NULL );"); // 6: created
     }
 
@@ -77,7 +77,7 @@ public class LapseSettingDao extends AbstractDao<LapseSetting, Long> {
         }
         stmt.bindLong(4, entity.getFramerate());
         stmt.bindLong(5, entity.getInterval());
-        stmt.bindLong(6, entity.getMovie_time());
+        stmt.bindLong(6, entity.getMovieTime());
         stmt.bindLong(7, entity.getCreated().getTime());
     }
 
@@ -96,7 +96,7 @@ public class LapseSettingDao extends AbstractDao<LapseSetting, Long> {
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // description
             cursor.getLong(offset + 3), // framerate
             cursor.getLong(offset + 4), // interval
-            cursor.getLong(offset + 5), // movie_time
+            cursor.getLong(offset + 5), // movieTime
             new java.util.Date(cursor.getLong(offset + 6)) // created
         );
         return entity;
@@ -110,7 +110,7 @@ public class LapseSettingDao extends AbstractDao<LapseSetting, Long> {
         entity.setDescription(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setFramerate(cursor.getLong(offset + 3));
         entity.setInterval(cursor.getLong(offset + 4));
-        entity.setMovie_time(cursor.getLong(offset + 5));
+        entity.setMovieTime(cursor.getLong(offset + 5));
         entity.setCreated(new java.util.Date(cursor.getLong(offset + 6)));
      }
     
