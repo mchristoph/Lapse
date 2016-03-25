@@ -20,24 +20,12 @@ import at.mchristoph.lapse.app.fragments.MenuFragment;
 import at.mchristoph.lapse.app.utils.CameraApiUtil;
 
 public class LapseActivity extends AppCompatActivity {
-    private CameraApiUtil mApi;
-    private WifiManager mWifiManager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lapse);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
         replaceFragment(new MenuFragment());
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 
     @Override
@@ -45,21 +33,6 @@ public class LapseActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_lapse, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        /*if (id == R.id.action_settings) {
-            return true;
-        }*/
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

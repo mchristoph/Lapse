@@ -48,7 +48,7 @@ public class MenuFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        boolean connected = true;
+        boolean connected = false;
         if (CameraApiUtil.GetInstance() != null){
             //connected = CameraApiUtil.GetInstance().isConnected();
         }
@@ -71,15 +71,16 @@ public class MenuFragment extends Fragment {
         mBtnQuick.setCardBackgroundColor(color);
         mBtnQuick.setClickable(connected);
         mBtnQuick.setEnabled(connected);
-        mBtnLapseSettings.setCardBackgroundColor(color);
-        mBtnLapseSettings.setClickable(connected);
-        mBtnLapseSettings.setEnabled(connected);
-        mBtnPresets.setCardBackgroundColor(color);
-        mBtnPresets.setClickable(connected);
-        mBtnPresets.setEnabled(connected);
-        mBtnHistory.setCardBackgroundColor(color);
-        mBtnHistory.setClickable(connected);
-        mBtnHistory.setEnabled(connected);
+
+        //mBtnLapseSettings.setCardBackgroundColor(color);
+        mBtnLapseSettings.setClickable(true);
+        mBtnLapseSettings.setEnabled(true);
+        //mBtnPresets.setCardBackgroundColor(color);
+        mBtnPresets.setClickable(true);
+        mBtnPresets.setEnabled(true);
+        //mBtnHistory.setCardBackgroundColor(color);
+        mBtnHistory.setClickable(true);
+        mBtnHistory.setEnabled(true);
     }
 
     @OnClick(R.id.btn_connect_device)

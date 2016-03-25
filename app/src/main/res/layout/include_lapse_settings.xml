@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:showIn="@layout/fragment_lapse_settings">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        android:textAppearance="@style/LapseText"
+        android:drawableStart="@drawable/ic_schedule"
+        android:drawableLeft="@drawable/ic_schedule"
+        android:text="@string/text_view_framerate"
+        android:gravity="center_vertical" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:textColor="#d2131313"
+        android:id="@+id/txt_target_framerate"
+        android:text="24"
+        android:layout_marginBottom="18dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_timer"
+        android:drawableLeft="@drawable/ic_timer"
+        android:textAppearance="@style/LapseText"
+        android:text="@string/text_view_interval"
+        android:gravity="center_vertical" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/txt_interval"
+        android:text="5"
+        android:textColor="#d2131313"
+        android:layout_marginBottom="18dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_av_timer"
+        android:drawableLeft="@drawable/ic_av_timer"
+        android:textAppearance="@style/LapseText"
+        android:text="@string/text_view_movie_time"
+        android:layout_marginBottom="10dp"
+        android:gravity="center_vertical" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <NumberPicker
+            android:theme="@style/LapsePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/np_times_hours"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical" />
+
+        <NumberPicker
+            android:theme="@style/LapsePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/np_times_minutes"
+            android:layout_gravity="center_horizontal" />
+
+        <NumberPicker
+            android:theme="@style/LapsePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/np_times_seconds"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+</merge>

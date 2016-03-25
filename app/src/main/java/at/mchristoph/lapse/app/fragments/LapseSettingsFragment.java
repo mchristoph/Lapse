@@ -40,8 +40,12 @@ import java.util.concurrent.TimeUnit;
 import at.mchristoph.lapse.app.LapseActivity;
 import at.mchristoph.lapse.app.LapseApplication;
 import at.mchristoph.lapse.app.R;
+import at.mchristoph.lapse.app.fragments.dialogs.AddPresetsModalBottomSheet;
+import at.mchristoph.lapse.app.fragments.dialogs.PresetsModalBottomSheet;
+import at.mchristoph.lapse.app.interfaces.OnPresetBottomSheetListener;
 import at.mchristoph.lapse.app.models.ServerDevice;
 import at.mchristoph.lapse.app.services.FetchAddressIntentService;
+import at.mchristoph.lapse.app.utils.CameraApiUtil;
 import at.mchristoph.lapse.dao.model.LapseHistory;
 import at.mchristoph.lapse.dao.model.LapseHistoryDao;
 import at.mchristoph.lapse.dao.model.LapseSetting;
@@ -57,14 +61,19 @@ import de.greenrobot.dao.DaoException;
  */
 public class LapseSettingsFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String ARG_DEVICE = "arg_connected_device";
+    private static final String KEY_FPS = "key_fps";
+    private static final String KEY_INTERVAL = "key_interval";
+    private static final String KEY_MOVIETIME_H = "key_movie_time_h";
+    private static final String KEY_MOVIETIME_M = "key_movie_time_m";
+    private static final String KEY_MOVIETIME_S = "key_movie_time_s";
 
     private ServerDevice mDevice;
     private AddressResultReceiver mResultReceiver;
     private GoogleApiClient mGoogleApiClient;
 
-    @Bind(R.id.np_time_hours)
+    @Bind(R.id.np_times_hours)
     protected NumberPicker mPickerHours;
-    @Bind(R.id.np_time__minutes)
+    @Bind(R.id.np_times_minutes)
     protected NumberPicker mPickerMinutes;
     @Bind(R.id.np_times_seconds)
     protected NumberPicker mPickerSeconds;
@@ -83,6 +92,8 @@ public class LapseSettingsFragment extends Fragment implements GoogleApiClient.C
     private List<String> minAndSec;
     private Location mLastLocation;
     private String mCurrentLocation;
+
+    private Bundle mSavedInstanceState;
 
     /**
      * Use this factory method to create a new instance of
@@ -125,6 +136,8 @@ public class LapseSettingsFragment extends Fragment implements GoogleApiClient.C
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+
+        mSavedInstanceState = savedInstanceState;
     }
 
     @Override
@@ -162,20 +175,14 @@ public class LapseSettingsFragment extends Fragment implements GoogleApiClient.C
         mPickerHours.setDisplayedValues(hours.toArray(new String[hours.size()]));
         mPickerHours.setMinValue(0);
         mPickerHours.setMaxValue(24);
-        mPickerHours.setValue(0);
-        mPickerHours.setOnValueChangedListener(listener);
 
         mPickerMinutes.setDisplayedValues(minAndSec.toArray(new String[minAndSec.size()]));
         mPickerMinutes.setMinValue(0);
         mPickerMinutes.setMaxValue(59);
-        mPickerMinutes.setValue(0);
-        mPickerMinutes.setOnValueChangedListener(listener);
 
         mPickerSeconds.setDisplayedValues(minAndSec.toArray(new String[minAndSec.size()]));
         mPickerSeconds.setMinValue(0);
         mPickerSeconds.setMaxValue(59);
-        mPickerSeconds.setValue(5);
-        mPickerSeconds.setOnValueChangedListener(listener);
 
         TextWatcher watcher = new TextWatcher() {
             @Override
@@ -196,8 +203,9 @@ public class LapseSettingsFragment extends Fragment implements GoogleApiClient.C
         mFps.addTextChangedListener(watcher);
         mIntervall.addTextChangedListener(watcher);
 
-        Calculate();
-
+        mPickerHours.setOnValueChangedListener(listener);
+        mPickerMinutes.setOnValueChangedListener(listener);
+        mPickerSeconds.setOnValueChangedListener(listener);
         mStartButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -207,7 +215,33 @@ public class LapseSettingsFragment extends Fragment implements GoogleApiClient.C
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mSavedInstanceState != null){
+            mFps.setText(mSavedInstanceState.getString(KEY_FPS));
+            mIntervall.setText(mSavedInstanceState.getString(KEY_INTERVAL));
+            mPickerHours.setValue(mSavedInstanceState.getInt(KEY_MOVIETIME_H));
+            mPickerMinutes.setValue(mSavedInstanceState.getInt(KEY_MOVIETIME_M));
+            mPickerSeconds.setValue(mSavedInstanceState.getInt(KEY_MOVIETIME_S));
+        }else{
+            /*mFps.setText("24");
+            mIntervall.setText("5");
+            mPickerHours.setValue(0);
+            mPickerMinutes.setValue(0);
+            mPickerSeconds.setValue(5);*/
+        }
+
+        Calculate();
+    }
+
     private void StartTimelapse() {
+        if (CameraApiUtil.GetInstance() == null || !CameraApiUtil.GetInstance().isConnected()){
+            Snackbar.make(getView(), "Cannot start, no device connected", Snackbar.LENGTH_LONG).show();
+            return;
+        }
+
         long seconds = 0;
 
         int hour = mPickerHours.getValue();
@@ -239,6 +273,9 @@ public class LapseSettingsFragment extends Fragment implements GoogleApiClient.C
         history.setFramerate(fps);
         history.setInterval(interval);
         history.setMovieTime(seconds);
+        history.setMovieTimeHours(hour);
+        history.setMovieTimeMinutes(minute);
+        history.setMovieTimeSeconds(second);
         history.setCreated(new Date());
         history.setLocation(mCurrentLocation == null ? "" : mCurrentLocation);
 
@@ -296,29 +333,25 @@ public class LapseSettingsFragment extends Fragment implements GoogleApiClient.C
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(KEY_FPS, mFps.getText().toString());
+        outState.putString(KEY_INTERVAL, mIntervall.getText().toString());
+        outState.putInt(KEY_MOVIETIME_H, mPickerHours.getValue());
+        outState.putInt(KEY_MOVIETIME_M, mPickerMinutes.getValue());
+        outState.putInt(KEY_MOVIETIME_S, mPickerSeconds.getValue());
+
+        super.onSaveInstanceState(outState);
+    }
+
     private void showSaveDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        final View dlgView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_add_preset, null);
-        builder.setView(dlgView);
-        builder.setTitle(R.string.add_preset_dialog_title);
-
-        final EditText name = ButterKnife.findById(dlgView, R.id.txt_preset_name);
-        final EditText desc = ButterKnife.findById(dlgView, R.id.txt_preset_description);
-
-        builder.setNegativeButton(R.string.add_preset_dialog_negative, new DialogInterface.OnClickListener() {
+        AddPresetsModalBottomSheet sheet = AddPresetsModalBottomSheet.newInstance(new OnPresetBottomSheetListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-
+            public void onPositive(@Nullable LapseSetting settings) {
+                addPreset(settings.getName(), settings.getDescription());
             }
         });
-        builder.setPositiveButton(R.string.add_preset_dialog_positive, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                addPreset(name.getText().toString(), desc.getText().toString());
-            }
-        });
-
-        builder.create().show();
+        sheet.show(getFragmentManager(), "bottom_sheet");
     }
 
     private void addPreset(String name, String description) {
@@ -353,6 +386,9 @@ public class LapseSettingsFragment extends Fragment implements GoogleApiClient.C
         set.setFramerate(fps);
         set.setInterval(interval);
         set.setMovieTime(seconds);
+        set.setMovieTimeHours(hour);
+        set.setMovieTimeMinutes(minute);
+        set.setMovieTimeSeconds(second);
         set.setCreated(new Date());
 
         int message = R.string.add_preset_success;
@@ -409,6 +445,7 @@ public class LapseSettingsFragment extends Fragment implements GoogleApiClient.C
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
     }
+
 
     class AddressResultReceiver extends ResultReceiver {
         public AddressResultReceiver(Handler handler) {

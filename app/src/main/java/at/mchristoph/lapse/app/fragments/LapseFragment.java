@@ -1,10 +1,9 @@
 package at.mchristoph.lapse.app.fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,17 +11,17 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import at.mchristoph.lapse.app.utils.ApiJsonCallback;
-import com.android.volley.VolleyError;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
-import java.util.concurrent.TimeUnit;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import at.mchristoph.lapse.app.R;
+import at.mchristoph.lapse.app.events.LapseProgressEvent;
+import at.mchristoph.lapse.app.services.LapseService;
 import at.mchristoph.lapse.app.utils.CameraApiUtil;
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import org.json.JSONObject;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,12 +29,6 @@ import org.json.JSONObject;
  * create an instance of this fragment.
  */
 public class LapseFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_TIME = "arg_total_time";
-    private static final String ARG_INTERVALL = "arg_intervall";
-
-    // TODO: Rename and change types of parameters
     private Long mTotalTime;
     private Long mIntervall;
     private CameraApiUtil mApi;
@@ -57,8 +50,8 @@ public class LapseFragment extends Fragment {
     public static LapseFragment newInstance(Long totalTime, Long intervall) {
         LapseFragment fragment = new LapseFragment();
         Bundle args = new Bundle();
-        args.putLong(ARG_TIME, totalTime);
-        args.putLong(ARG_INTERVALL, intervall);
+        args.putLong(LapseService.ARG_TIME, totalTime);
+        args.putLong(LapseService.ARG_INTERVAL, intervall);
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,8 +64,8 @@ public class LapseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mTotalTime = getArguments().getLong(ARG_TIME);
-            mIntervall = getArguments().getLong(ARG_INTERVALL);
+            mTotalTime = getArguments().getLong(LapseService.ARG_TIME);
+            mIntervall = getArguments().getLong(LapseService.ARG_INTERVAL);
         }
     }
 
@@ -101,42 +94,34 @@ public class LapseFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        mApi = CameraApiUtil.GetInstance();
+        Intent intent = new Intent(getContext(), LapseService.class);
+        intent.putExtra(LapseService.ARG_TIME, mTotalTime);
+        intent.putExtra(LapseService.ARG_INTERVAL, mIntervall);
+        getActivity().startService(intent);
+    }
 
-        if (mApi != null) {
-            new CountDownTimer(mTotalTime, mIntervall) {
-                @Override
-                public void onTick(long millisUntilFinished_) {
-                    Log.d("Lapse_Timer", "Tick");
-                    mApi.takePicture(new ApiJsonCallback() {
-                        @Override
-                        public void onSuccess(JSONObject response) {
-                            Log.d("Lapse_Timer", "Sent");
-                        }
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
 
-                        @Override
-                        public void onFailure(VolleyError error) {
-                            Log.d("Lapse_Timer", error.toString());
-                        }
-                    });
-                    double test = ((double) millisUntilFinished_ / (double) mTotalTime) * 100f;
-                    mProgressTimer.setProgress((int) test);
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
 
-                    String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millisUntilFinished_),
-                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished_) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished_)),
-                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished_) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished_)));
-
-                    mProgressTimerText.setText(hms);
-                }
-
-                @Override
-                public void onFinish() {
-                    mProgressTimer.setProgress(0);
-                    mProgressTimerText.setText(String.format("%02d:%02d:%02d", 0, 0, 0));
-                    mShimmerView.stopShimmerAnimation();
-                    mProgressText.setText("LAPSE FINISHED!");
-                }
-            }.start();
+    @Subscribe
+    public void onMessageEvent(LapseProgressEvent event){
+        if (event.progress > 0){
+            mProgressTimer.setProgress(event.progress);
+            mProgressTimerText.setText(event.timeUntilFinished);
+        }else {
+            mProgressTimer.setProgress(0);
+            mProgressTimerText.setText(String.format("%02d:%02d:%02d", 0, 0, 0));
+            mShimmerView.stopShimmerAnimation();
+            mProgressText.setText("LAPSE FINISHED!");
         }
     }
 }

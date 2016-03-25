@@ -3,7 +3,6 @@ package at.mchristoph.lapse.app.utils;
 import android.content.Context;
 import android.util.Log;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -16,12 +15,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import at.mchristoph.lapse.app.interfaces.ApiBooleanCallback;
+import at.mchristoph.lapse.app.interfaces.ApiJsonCallback;
 import at.mchristoph.lapse.app.models.ServerDevice;
 
 /**

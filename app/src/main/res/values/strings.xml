@@ -16,14 +16,23 @@
     <string name="text_view_framerate">Target Framerate</string>
     <string name="text_view_interval">Shoot Interval (s)</string>
     <string name="text_view_movie_time">Target Movie Time</string>
+    <string name="text_view_preset_name">Preset Name</string>
+    <string name="text_view_preset_desc">Preset Description</string>
 
     <!--Add Presets-->
+    <string name="add_preset_name_hint">Preset Name</string>
+    <string name="add_preset_desc_hint">Preset  Description</string>
     <string name="add_preset_dialog_title">Add Preset</string>
     <string name="add_preset_dialog_positive">Save Preset</string>
     <string name="add_preset_dialog_negative">Cancel</string>
     <string name="add_preset_success">Preset saved successfully.</string>
     <string name="add_preset_safe_error">There was an unknow error saving the preset.</string>
     <string name="add_preset_no_name_error">You must enter a name for the preset.</string>
+
+    <!--Presets Fragment-->
+    <string name="preset_deleted">Preset \"%s\" deleted.</string>
+    <string name="preset_deleted_undo_action">Undo</string>
+
 
     <!--Generic values-->
     <string name="generic_no_items">No items available.</string>
@@ -32,4 +41,13 @@
     <string name="generic_movie_time">Movie Time</string>
     <string name="generic_location">Shot location</string>
     <string name="generic_time_string_format" formatted="false">%02d:%02d:%02d</string>
+    <string name="generic_dismiss">Dismiss</string>
+    <string name="generic_save">Save</string>
+
+    <!--Menu Values-->
+    <string name="menu_connect">Connect to Device</string>
+    <string name="menu_quick_start">Quick Start</string>
+    <string name="menu_lapse">Lapse</string>
+    <string name="menu_presets">Presets</string>
+    <string name="menu_history">History</string>
 </resources>

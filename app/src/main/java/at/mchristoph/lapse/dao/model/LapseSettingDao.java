@@ -29,7 +29,10 @@ public class LapseSettingDao extends AbstractDao<LapseSetting, Long> {
         public final static Property Framerate = new Property(3, long.class, "framerate", false, "FRAMERATE");
         public final static Property Interval = new Property(4, long.class, "interval", false, "INTERVAL");
         public final static Property MovieTime = new Property(5, long.class, "movieTime", false, "MOVIE_TIME");
-        public final static Property Created = new Property(6, java.util.Date.class, "created", false, "CREATED");
+        public final static Property MovieTimeHours = new Property(6, int.class, "movieTimeHours", false, "MOVIE_TIME_HOURS");
+        public final static Property MovieTimeMinutes = new Property(7, int.class, "movieTimeMinutes", false, "MOVIE_TIME_MINUTES");
+        public final static Property MovieTimeSeconds = new Property(8, int.class, "movieTimeSeconds", false, "MOVIE_TIME_SECONDS");
+        public final static Property Created = new Property(9, java.util.Date.class, "created", false, "CREATED");
     };
 
 
@@ -51,7 +54,10 @@ public class LapseSettingDao extends AbstractDao<LapseSetting, Long> {
                 "\"FRAMERATE\" INTEGER NOT NULL ," + // 3: framerate
                 "\"INTERVAL\" INTEGER NOT NULL ," + // 4: interval
                 "\"MOVIE_TIME\" INTEGER NOT NULL ," + // 5: movieTime
-                "\"CREATED\" INTEGER NOT NULL );"); // 6: created
+                "\"MOVIE_TIME_HOURS\" INTEGER NOT NULL ," + // 6: movieTimeHours
+                "\"MOVIE_TIME_MINUTES\" INTEGER NOT NULL ," + // 7: movieTimeMinutes
+                "\"MOVIE_TIME_SECONDS\" INTEGER NOT NULL ," + // 8: movieTimeSeconds
+                "\"CREATED\" INTEGER NOT NULL );"); // 9: created
     }
 
     /** Drops the underlying database table. */
@@ -78,7 +84,10 @@ public class LapseSettingDao extends AbstractDao<LapseSetting, Long> {
         stmt.bindLong(4, entity.getFramerate());
         stmt.bindLong(5, entity.getInterval());
         stmt.bindLong(6, entity.getMovieTime());
-        stmt.bindLong(7, entity.getCreated().getTime());
+        stmt.bindLong(7, entity.getMovieTimeHours());
+        stmt.bindLong(8, entity.getMovieTimeMinutes());
+        stmt.bindLong(9, entity.getMovieTimeSeconds());
+        stmt.bindLong(10, entity.getCreated().getTime());
     }
 
     /** @inheritdoc */
@@ -97,7 +106,10 @@ public class LapseSettingDao extends AbstractDao<LapseSetting, Long> {
             cursor.getLong(offset + 3), // framerate
             cursor.getLong(offset + 4), // interval
             cursor.getLong(offset + 5), // movieTime
-            new java.util.Date(cursor.getLong(offset + 6)) // created
+            cursor.getInt(offset + 6), // movieTimeHours
+            cursor.getInt(offset + 7), // movieTimeMinutes
+            cursor.getInt(offset + 8), // movieTimeSeconds
+            new java.util.Date(cursor.getLong(offset + 9)) // created
         );
         return entity;
     }
@@ -111,7 +123,10 @@ public class LapseSettingDao extends AbstractDao<LapseSetting, Long> {
         entity.setFramerate(cursor.getLong(offset + 3));
         entity.setInterval(cursor.getLong(offset + 4));
         entity.setMovieTime(cursor.getLong(offset + 5));
-        entity.setCreated(new java.util.Date(cursor.getLong(offset + 6)));
+        entity.setMovieTimeHours(cursor.getInt(offset + 6));
+        entity.setMovieTimeMinutes(cursor.getInt(offset + 7));
+        entity.setMovieTimeSeconds(cursor.getInt(offset + 8));
+        entity.setCreated(new java.util.Date(cursor.getLong(offset + 9)));
      }
     
     /** @inheritdoc */

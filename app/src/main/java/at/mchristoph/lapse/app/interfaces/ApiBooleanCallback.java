@@ -1,4 +1,4 @@
-package at.mchristoph.lapse.app.utils;
+package at.mchristoph.lapse.app.interfaces;
 
 import com.android.volley.VolleyError;
 

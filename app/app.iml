@@ -146,6 +146,7 @@
     <orderEntry type="library" exported="" name="play-services-appstate-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-games-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="greendao-2.1.0" level="project" />
+    <orderEntry type="library" exported="" name="eventbus-3.0.0" level="project" />
     <orderEntry type="library" exported="" name="design-23.2.1" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-23.2.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-gcm-8.4.0" level="project" />

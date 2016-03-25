@@ -36,7 +36,7 @@ import at.mchristoph.lapse.app.adapters.DeviceListAdapter;
 import at.mchristoph.lapse.app.adapters.WifiListAdapter;
 import at.mchristoph.lapse.app.asynctasks.DeviceLoader;
 import at.mchristoph.lapse.app.models.ServerDevice;
-import at.mchristoph.lapse.app.utils.ApiBooleanCallback;
+import at.mchristoph.lapse.app.interfaces.ApiBooleanCallback;
 import at.mchristoph.lapse.app.utils.CameraApiUtil;
 import butterknife.Bind;
 import butterknife.ButterKnife;

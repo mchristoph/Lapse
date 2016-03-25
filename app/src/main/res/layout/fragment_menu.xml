@@ -23,7 +23,7 @@
                 android:layout_gravity="center"
                 android:layout_height="wrap_content" />
             <TextView
-                android:text="Connect to Device"
+                android:text="@string/menu_connect"
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:text="Quick Start"
+            android:text="@string/menu_quick_start"
             android:textSize="20sp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -57,7 +57,7 @@
         android:layout_weight="1"
         android:clickable="false"
         card_view:cardCornerRadius="@dimen/card_view_border_radius"
-        card_view:cardBackgroundColor="@color/background_material_light"
+        card_view:cardBackgroundColor="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
@@ -69,7 +69,7 @@
                 android:layout_gravity="center"
                 android:layout_height="wrap_content" />
             <TextView
-                android:text="Lapse"
+                android:text="@string/menu_lapse"
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
         android:layout_weight="1"
         android:clickable="false"
         card_view:cardCornerRadius="@dimen/card_view_border_radius"
-        card_view:cardBackgroundColor="@color/background_material_light"
+        card_view:cardBackgroundColor="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
@@ -96,7 +96,7 @@
                 android:layout_gravity="center"
                 android:layout_height="wrap_content" />
             <TextView
-                android:text="Presets"
+                android:text="@string/menu_presets"
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -111,7 +111,7 @@
         android:layout_weight="1"
         android:clickable="false"
         card_view:cardCornerRadius="@dimen/card_view_border_radius"
-        card_view:cardBackgroundColor="@color/background_material_light"
+        card_view:cardBackgroundColor="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
@@ -123,7 +123,7 @@
                 android:layout_gravity="center"
                 android:layout_height="wrap_content" />
             <TextView
-                android:text="History"
+                android:text="@string/menu_history"
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

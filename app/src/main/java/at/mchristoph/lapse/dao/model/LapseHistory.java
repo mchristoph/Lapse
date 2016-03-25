@@ -10,6 +10,9 @@ public class LapseHistory {
     private long framerate;
     private long interval;
     private long movieTime;
+    private int movieTimeHours;
+    private int movieTimeMinutes;
+    private int movieTimeSeconds;
     private String location;
     /** Not-null value. */
     private java.util.Date created;
@@ -21,11 +24,14 @@ public class LapseHistory {
         this.id = id;
     }
 
-    public LapseHistory(Long id, long framerate, long interval, long movieTime, String location, java.util.Date created) {
+    public LapseHistory(Long id, long framerate, long interval, long movieTime, int movieTimeHours, int movieTimeMinutes, int movieTimeSeconds, String location, java.util.Date created) {
         this.id = id;
         this.framerate = framerate;
         this.interval = interval;
         this.movieTime = movieTime;
+        this.movieTimeHours = movieTimeHours;
+        this.movieTimeMinutes = movieTimeMinutes;
+        this.movieTimeSeconds = movieTimeSeconds;
         this.location = location;
         this.created = created;
     }
@@ -60,6 +66,30 @@ public class LapseHistory {
 
     public void setMovieTime(long movieTime) {
         this.movieTime = movieTime;
+    }
+
+    public int getMovieTimeHours() {
+        return movieTimeHours;
+    }
+
+    public void setMovieTimeHours(int movieTimeHours) {
+        this.movieTimeHours = movieTimeHours;
+    }
+
+    public int getMovieTimeMinutes() {
+        return movieTimeMinutes;
+    }
+
+    public void setMovieTimeMinutes(int movieTimeMinutes) {
+        this.movieTimeMinutes = movieTimeMinutes;
+    }
+
+    public int getMovieTimeSeconds() {
+        return movieTimeSeconds;
+    }
+
+    public void setMovieTimeSeconds(int movieTimeSeconds) {
+        this.movieTimeSeconds = movieTimeSeconds;
     }
 
     public String getLocation() {

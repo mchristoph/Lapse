@@ -44,6 +44,7 @@ dependencies {
     compile 'com.github.jorgecastilloprz:fabprogresscircle:1.01@aar'
     compile 'com.facebook.shimmer:shimmer:0.1.0@aar'
     compile 'de.greenrobot:greendao:2.1.0'
+    compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.android.support:support-v4:23.2.1'
     compile 'com.google.android.gms:play-services:8.4.0'
 }

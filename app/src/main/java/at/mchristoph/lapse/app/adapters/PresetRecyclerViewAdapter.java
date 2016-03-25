@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import at.mchristoph.lapse.app.R;
+import at.mchristoph.lapse.app.interfaces.OnItemClickListener;
+import at.mchristoph.lapse.app.interfaces.OnLongItemClickListener;
 import at.mchristoph.lapse.dao.model.LapseSetting;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -21,6 +23,8 @@ import butterknife.ButterKnife;
  */
 public class PresetRecyclerViewAdapter extends RecyclerView.Adapter<PresetRecyclerViewAdapter.ViewHolder> {
     private List<LapseSetting> mItems;
+    private static OnItemClickListener mClickListener;
+    private static OnLongItemClickListener mLongClickListener;
 
     public PresetRecyclerViewAdapter(){
         mItems = new ArrayList<>();
@@ -78,7 +82,7 @@ public class PresetRecyclerViewAdapter extends RecyclerView.Adapter<PresetRecycl
         return mItems.get(pos);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         @Bind(R.id.list_item_preset_name) TextView name;
         @Bind(R.id.list_item_preset_desc) TextView description;
         @Bind(R.id.list_item_preset_created) TextView created;
@@ -91,6 +95,7 @@ public class PresetRecyclerViewAdapter extends RecyclerView.Adapter<PresetRecycl
         public final String movieTimeLabel;
         public final String timeStampFormat;
 
+
         public ViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
@@ -98,6 +103,9 @@ public class PresetRecyclerViewAdapter extends RecyclerView.Adapter<PresetRecycl
             intervalLabel = "Interval: ";
             movieTimeLabel = "Movie Time: ";
             timeStampFormat = "%02d:%02d:%02d";
+
+            view.setOnClickListener(this);
+            view.setOnLongClickListener(this);
         }
 
         public ViewHolder(View view, Context ctx){
@@ -107,7 +115,35 @@ public class PresetRecyclerViewAdapter extends RecyclerView.Adapter<PresetRecycl
             intervalLabel = ctx.getString(R.string.generic_interval) + ": ";
             movieTimeLabel = ctx.getString(R.string.generic_movie_time) + ": ";
             timeStampFormat = ctx.getString(R.string.generic_time_string_format);
+
+
+            view.setOnClickListener(this);
+            view.setOnLongClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            if (PresetRecyclerViewAdapter.mClickListener != null){
+                PresetRecyclerViewAdapter.mClickListener.onClick(getAdapterPosition(), v);
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (PresetRecyclerViewAdapter.mClickListener != null){
+                return PresetRecyclerViewAdapter.mLongClickListener.onLongClick(getAdapterPosition(), v);
+            }
+
+            return false;
+        }
+    }
+
+    public void setOnClickListener(OnItemClickListener l){
+        PresetRecyclerViewAdapter.mClickListener = l;
+    }
+
+    public void setOnLongClickListener(OnLongItemClickListener l){
+        PresetRecyclerViewAdapter.mLongClickListener = l;
     }
 }
 

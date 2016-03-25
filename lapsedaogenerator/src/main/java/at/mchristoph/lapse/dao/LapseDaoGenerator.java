@@ -6,7 +6,7 @@ import de.greenrobot.daogenerator.Schema;
 
 public class LapseDaoGenerator {
     public static void main(String args[]) throws Exception {
-        Schema schema = new Schema(2, "at.mchristoph.lapse.dao.model");
+        Schema schema = new Schema(3, "at.mchristoph.lapse.dao.model");
 
         Entity lapseSettings = schema.addEntity("LapseSetting");
         lapseSettings.addIdProperty();
@@ -15,6 +15,9 @@ public class LapseDaoGenerator {
         lapseSettings.addLongProperty("framerate").notNull();
         lapseSettings.addLongProperty("interval").notNull();
         lapseSettings.addLongProperty("movieTime").notNull();
+        lapseSettings.addIntProperty("movieTimeHours").notNull();
+        lapseSettings.addIntProperty("movieTimeMinutes").notNull();
+        lapseSettings.addIntProperty("movieTimeSeconds").notNull();
         lapseSettings.addDateProperty("created").notNull();
 
         Entity lapseHistory = schema.addEntity("LapseHistory");
@@ -22,6 +25,9 @@ public class LapseDaoGenerator {
         lapseHistory.addLongProperty("framerate").notNull();
         lapseHistory.addLongProperty("interval").notNull();
         lapseHistory.addLongProperty("movieTime").notNull();
+        lapseHistory.addIntProperty("movieTimeHours").notNull();
+        lapseHistory.addIntProperty("movieTimeMinutes").notNull();
+        lapseHistory.addIntProperty("movieTimeSeconds").notNull();
         lapseHistory.addStringProperty("location");
         lapseHistory.addDateProperty("created").notNull();
 
