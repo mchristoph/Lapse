@@ -54,5 +54,16 @@ public class LapseActivity extends AppCompatActivity {
                 .commit();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((LapseApplication)getApplication()).getConnectionManager().registerReciever();
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        ((LapseApplication)getApplication()).getConnectionManager().unregisterReciever();
+    }
 }

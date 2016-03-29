@@ -11,12 +11,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:layout_above="@+id/txt_search_info"
         android:layout_centerHorizontal="true" />
+    <TextView
+        android:textSize="25dp"
+        android:visibility="visible"
+        android:clickable="false"
+        android:text="@string/connection_info_searching_wifi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/txt_search_info" />
 
     <ImageView
         android:src="@drawable/ic_error"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:clickable="true"
         android:id="@+id/img_device_info"
         android:visibility="gone"
         android:layout_above="@+id/txt_device_info"
@@ -24,6 +36,7 @@
     <TextView
         android:textSize="25dp"
         android:visibility="gone"
+        android:clickable="true"
         android:text="@string/connection_info_no_wifi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

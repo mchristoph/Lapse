@@ -2,7 +2,8 @@
     <string name="app_name">Lapse</string>
 
     <!--Connection-->
-    <string name="connection_info_no_wifi">No devices found.</string>
+    <string name="connection_info_no_wifi">No devices found. Click to reload.</string>
+    <string name="connection_info_searching_wifi">Searching for devices.</string>
     <string name="connection_info_enable_wifi">Enabling wifi.</string>
     <string name="connection_info_connect_wifi">Attempt to connect to wifi.</string>
     <string name="connection_info_connected_to">Successfully connected to wifi %s.</string>

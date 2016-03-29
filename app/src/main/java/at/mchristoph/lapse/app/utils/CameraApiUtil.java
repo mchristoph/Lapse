@@ -30,7 +30,6 @@ public class CameraApiUtil {
     private static final String LOG_TAG = CameraApiUtil.class.getSimpleName();
     private final String SERVICE_CAM = "camera";
 
-    private static CameraApiUtil mInstance;
     private RequestQueue mRequestQueue;
     private Context mCtx;
 
@@ -42,8 +41,8 @@ public class CameraApiUtil {
     private final Set<String> mSupportedApiSet = new HashSet<String>();
     private final Set<String> mAvailableCameraApiSet = new HashSet<String>();
 
-    private CameraApiUtil(ServerDevice device, Context ctx){
-        mDevice = device;
+    public CameraApiUtil(Context ctx){
+        mDevice = null;
         mCtx = ctx;
         mRequestQueue = Volley.newRequestQueue(mCtx);
         mRequestId = 1;
@@ -51,18 +50,8 @@ public class CameraApiUtil {
         mWifiName = null;
     }
 
-    public static CameraApiUtil GetInstance(){
-        if (mInstance != null)
-            return mInstance;
-
-        return null;
-    }
-
-    public static CameraApiUtil GetInstance(ServerDevice device, Context ctx){
-        if (mInstance == null){
-            mInstance = new CameraApiUtil(device, ctx);
-        }
-        return mInstance;
+    public void setDevice(ServerDevice device){
+        mDevice = device;
     }
 
     /**
