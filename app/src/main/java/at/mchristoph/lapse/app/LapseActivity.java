@@ -1,25 +1,18 @@
 package at.mchristoph.lapse.app;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
+import android.net.wifi.WifiInfo;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
 
-import at.mchristoph.lapse.app.fragments.ConnectionFragment;
-import at.mchristoph.lapse.app.fragments.LapseSettingsFragment;
+import org.greenrobot.eventbus.EventBus;
+
+import at.mchristoph.lapse.app.events.ConnectionChangeEvent;
 import at.mchristoph.lapse.app.fragments.MenuFragment;
-import at.mchristoph.lapse.app.utils.CameraApiUtil;
+import at.mchristoph.lapse.app.interfaces.OnConnectionChangeListener;
 
-public class LapseActivity extends AppCompatActivity {
+public class LapseActivity extends AppCompatActivity implements OnConnectionChangeListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +51,7 @@ public class LapseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         ((LapseApplication)getApplication()).getConnectionManager().registerReciever();
+        ((LapseApplication)getApplication()).getConnectionManager().setConnectionListener(this);
     }
 
     @Override
@@ -65,5 +59,15 @@ public class LapseActivity extends AppCompatActivity {
         super.onPause();
 
         ((LapseApplication)getApplication()).getConnectionManager().unregisterReciever();
+    }
+
+    @Override
+    public void onConnect(WifiInfo connectionInfo) {
+        EventBus.getDefault().post(new ConnectionChangeEvent(ConnectionChangeEvent.Status.CONNECTED, connectionInfo));
+    }
+
+    @Override
+    public void onDisconnect(WifiInfo connectionInfo) {
+        EventBus.getDefault().post(new ConnectionChangeEvent(ConnectionChangeEvent.Status.DISCONNECTED, connectionInfo));
     }
 }

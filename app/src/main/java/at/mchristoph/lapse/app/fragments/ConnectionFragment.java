@@ -20,6 +20,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.List;
 
 import at.mchristoph.lapse.app.LapseActivity;
@@ -28,11 +31,15 @@ import at.mchristoph.lapse.app.R;
 import at.mchristoph.lapse.app.adapters.DeviceListAdapter;
 import at.mchristoph.lapse.app.adapters.WifiListAdapter;
 import at.mchristoph.lapse.app.asynctasks.DeviceLoader;
+import at.mchristoph.lapse.app.events.ConnectionChangeEvent;
+import at.mchristoph.lapse.app.events.LapseProgressEvent;
 import at.mchristoph.lapse.app.interfaces.ApiBooleanCallback;
 import at.mchristoph.lapse.app.interfaces.AskForWlanCallback;
+import at.mchristoph.lapse.app.interfaces.ConnectionCallbacks;
 import at.mchristoph.lapse.app.interfaces.WifiScanListener;
 import at.mchristoph.lapse.app.models.ServerDevice;
 import at.mchristoph.lapse.app.utils.CameraApiUtil;
+import at.mchristoph.lapse.app.utils.ConnectionManager;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -50,6 +57,9 @@ public class ConnectionFragment extends Fragment implements AdapterView.OnItemCl
     @Bind(R.id.txt_device_info) protected TextView mTxtDeviceInfo;
     @Bind(R.id.img_device_info) protected ImageView mImgDeviceInfo;
 
+    private String mSSID;
+    private boolean mConnecting;
+
     private WifiListAdapter mWifiAdapter;
 
     public ConnectionFragment() {
@@ -66,21 +76,6 @@ public class ConnectionFragment extends Fragment implements AdapterView.OnItemCl
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        /*mWifiStateChangedReciever = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                NetworkInfo netInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                if (netInfo.isConnected()) {
-                    if (mWifiManager.getConnectionInfo().getSSID().equals("\"" + mSSID + "\"") && mConnecting == true) {
-                        Log.d("IsConnected", mWifiManager.getConnectionInfo().getSSID());
-                        Toast.makeText(getContext(), String.format(getString(R.string.connection_info_connect_wifi), mSSID) , Toast.LENGTH_SHORT).show();
-                        mConnecting = false;
-                        ConnectDevice();
-                    }
-                }
-            }
-        };*/
     }
 
     @Override
@@ -186,7 +181,9 @@ public class ConnectionFragment extends Fragment implements AdapterView.OnItemCl
         img.setVisibility(View.GONE);
         progress.setVisibility(View.VISIBLE);
 
-        final ScanResult device = (ScanResult) ((ListView) view).getAdapter().getItem(position);
+        final ScanResult device = (ScanResult) ((ListView) parent).getAdapter().getItem(position);
+        mSSID = device.SSID;
+        mConnecting = true;
 
         Toast.makeText(getContext(), R.string.connection_info_connect_wifi, Toast.LENGTH_SHORT).show();
         ((LapseApplication)getActivity().getApplication()).getConnectionManager().connectToWifi(device, new AskForWlanCallback() {
@@ -212,4 +209,27 @@ public class ConnectionFragment extends Fragment implements AdapterView.OnItemCl
 
         searchDevices();
     }
+
+    @Subscribe
+    public void onEvent(ConnectionChangeEvent event) {
+        if (event.status == ConnectionChangeEvent.Status.CONNECTED && event.wifiInfo.getSSID().equals("\"" + mSSID + "\"") && mConnecting == true) {
+            //Log.d("IsConnected", mWifiManager.getConnectionInfo().getSSID());
+            mConnecting = false;
+            Toast.makeText(getContext(), String.format(getString(R.string.connection_info_connect_wifi), event.wifiInfo.getSSID()), Toast.LENGTH_SHORT).show();
+            ConnectDevice();
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
 }
+

@@ -49,9 +49,6 @@ public class MenuFragment extends Fragment {
         super.onResume();
 
         boolean connected = false;
-        if (CameraApiUtil.GetInstance() != null){
-            //connected = CameraApiUtil.GetInstance().isConnected();
-        }
 
         int color = 0;
         if (connected == false) {

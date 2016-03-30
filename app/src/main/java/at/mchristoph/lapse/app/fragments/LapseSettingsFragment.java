@@ -237,7 +237,7 @@ public class LapseSettingsFragment extends Fragment implements GoogleApiClient.C
     }
 
     private void StartTimelapse() {
-        if (CameraApiUtil.GetInstance() == null || !CameraApiUtil.GetInstance().isConnected()){
+        if (!((LapseApplication)getActivity().getApplication()).getApi().isConnected()){
             Snackbar.make(getView(), "Cannot start, no device connected", Snackbar.LENGTH_LONG).show();
             return;
         }

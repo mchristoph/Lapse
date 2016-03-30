@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import java.util.concurrent.TimeUnit;
 
 import at.mchristoph.lapse.app.LapseActivity;
+import at.mchristoph.lapse.app.LapseApplication;
 import at.mchristoph.lapse.app.R;
 import at.mchristoph.lapse.app.events.LapseProgressEvent;
 import at.mchristoph.lapse.app.interfaces.ApiJsonCallback;
@@ -62,7 +63,7 @@ public class LapseService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mApi = CameraApiUtil.GetInstance();
+        mApi = ((LapseApplication)getApplication()).getApi();
 
         mTotalTime = intent.getLongExtra(ARG_TIME, 0);
         mInterval = intent.getLongExtra(ARG_INTERVAL, 0);
