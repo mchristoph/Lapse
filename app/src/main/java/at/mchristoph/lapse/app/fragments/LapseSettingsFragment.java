@@ -239,6 +239,8 @@ public class LapseSettingsFragment extends Fragment implements GoogleApiClient.C
     private void StartTimelapse() {
         if (!((LapseApplication)getActivity().getApplication()).getApi().isConnected()){
             Snackbar.make(getView(), "Cannot start, no device connected", Snackbar.LENGTH_LONG).show();
+
+            ((LapseActivity) getActivity()).replaceFragment(new LapseExtendedSettingsFragment());
             return;
         }
 
@@ -281,7 +283,7 @@ public class LapseSettingsFragment extends Fragment implements GoogleApiClient.C
 
         dao.insert(history);
 
-        ((LapseActivity) getActivity()).replaceFragment(LapseFragment.newInstance(count * interval * 1000L, interval * 1000L));
+        ((LapseActivity) getActivity()).replaceFragment(LapseFragment.newInstance(count * interval * 1000L, interval * 1000L, "", 100, false));
     }
 
     private void Calculate() {

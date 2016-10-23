@@ -19,7 +19,6 @@ import org.greenrobot.eventbus.Subscribe;
 import at.mchristoph.lapse.app.R;
 import at.mchristoph.lapse.app.events.LapseProgressEvent;
 import at.mchristoph.lapse.app.services.LapseService;
-import at.mchristoph.lapse.app.utils.CameraApiUtil;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -30,13 +29,16 @@ import butterknife.ButterKnife;
  */
 public class LapseFragment extends Fragment {
     private Long mTotalTime;
-    private Long mIntervall;
-    private CameraApiUtil mApi;
+    private Long mInterval;
+    private boolean mRunning;
+    private String mTimeString;
+    private int mProgress;
 
     @Bind(R.id.progress_timer) protected ProgressBar mProgressTimer;
     @Bind(R.id.progress_timer_text ) protected TextView mProgressTimerText;
     @Bind(R.id.progress_text) protected TextView mProgressText;
     @Bind(R.id.shimmer_view_container ) protected ShimmerFrameLayout mShimmerView;
+
 
     /**
      * Use this factory method to create a new instance of
@@ -47,11 +49,14 @@ public class LapseFragment extends Fragment {
      * @return A new instance of fragment LapseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static LapseFragment newInstance(Long totalTime, Long intervall) {
+    public static LapseFragment newInstance(Long totalTime, Long interval, String hms, int progress, boolean running) {
         LapseFragment fragment = new LapseFragment();
         Bundle args = new Bundle();
         args.putLong(LapseService.ARG_TIME, totalTime);
-        args.putLong(LapseService.ARG_INTERVAL, intervall);
+        args.putString(LapseService.ARG_TIME_STRING, hms);
+        args.putLong(LapseService.ARG_INTERVAL, interval);
+        args.putBoolean(LapseService.ARG_RUNNING, running);
+        args.putInt(LapseService.ARG_PROGRESS, progress);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,7 +70,10 @@ public class LapseFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mTotalTime = getArguments().getLong(LapseService.ARG_TIME);
-            mIntervall = getArguments().getLong(LapseService.ARG_INTERVAL);
+            mInterval = getArguments().getLong(LapseService.ARG_INTERVAL);
+            mRunning = getArguments().getBoolean(LapseService.ARG_RUNNING, false);
+            mTimeString = getArguments().getString(LapseService.ARG_TIME_STRING, "");
+            mProgress = getArguments().getInt(LapseService.ARG_PROGRESS, 100);
         }
     }
 
@@ -94,10 +102,14 @@ public class LapseFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        Intent intent = new Intent(getContext(), LapseService.class);
-        intent.putExtra(LapseService.ARG_TIME, mTotalTime);
-        intent.putExtra(LapseService.ARG_INTERVAL, mIntervall);
-        getActivity().startService(intent);
+        if (mRunning == false) {
+            Intent intent = new Intent(getContext(), LapseService.class);
+            intent.putExtra(LapseService.ARG_TIME, mTotalTime);
+            intent.putExtra(LapseService.ARG_INTERVAL, mInterval);
+            getActivity().startService(intent);
+        }else{
+            onMessageEvent(new LapseProgressEvent(mProgress, mTimeString));
+        }
     }
 
     @Override

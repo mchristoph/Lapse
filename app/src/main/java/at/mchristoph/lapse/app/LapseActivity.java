@@ -1,16 +1,20 @@
 package at.mchristoph.lapse.app;
 
+import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 
 import org.greenrobot.eventbus.EventBus;
 
 import at.mchristoph.lapse.app.events.ConnectionChangeEvent;
+import at.mchristoph.lapse.app.fragments.LapseFragment;
 import at.mchristoph.lapse.app.fragments.MenuFragment;
 import at.mchristoph.lapse.app.interfaces.OnConnectionChangeListener;
+import at.mchristoph.lapse.app.services.LapseService;
 
 public class LapseActivity extends AppCompatActivity implements OnConnectionChangeListener {
     @Override
@@ -18,7 +22,22 @@ public class LapseActivity extends AppCompatActivity implements OnConnectionChan
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lapse);
 
-        replaceFragment(new MenuFragment());
+        Intent intent = getIntent();
+        if (intent != null){
+            String action = intent.getStringExtra(LapseService.ARG_ACTION);
+            Long remainingTime = intent.getLongExtra(LapseService.ARG_TIME, 0);
+            String remainingTimeString = intent.getStringExtra(LapseService.ARG_TIME_STRING);
+            Long interval = intent.getLongExtra(LapseService.ARG_INTERVAL, 0);
+            boolean running = intent.getBooleanExtra(LapseService.ARG_RUNNING, false);
+            int progress = intent.getIntExtra(LapseService.ARG_PROGRESS, 0);
+            if (action != null && action.equals(LapseFragment.class.getSimpleName())){
+                replaceFragment(LapseFragment.newInstance(remainingTime, interval, remainingTimeString, progress, running));
+            }else{
+                replaceFragment(new MenuFragment());
+            }
+        }else{
+            replaceFragment(new MenuFragment());
+        }
     }
 
     @Override
@@ -59,6 +78,27 @@ public class LapseActivity extends AppCompatActivity implements OnConnectionChan
         super.onPause();
 
         ((LapseApplication)getApplication()).getConnectionManager().unregisterReciever();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        if (intent != null){
+            String action = intent.getStringExtra(LapseService.ARG_ACTION);
+            Long remainingTime = intent.getLongExtra(LapseService.ARG_TIME, 0);
+            String remainingTimeString = intent.getStringExtra(LapseService.ARG_TIME_STRING);
+            Long interval = intent.getLongExtra(LapseService.ARG_INTERVAL, 0);
+            boolean running = intent.getBooleanExtra(LapseService.ARG_RUNNING, false);
+            int progress = intent.getIntExtra(LapseService.ARG_PROGRESS, 0);
+            if (action != null && action.equals(LapseFragment.class.getSimpleName())){
+                replaceFragment(LapseFragment.newInstance(remainingTime, interval, remainingTimeString, progress, running));
+            }else{
+                replaceFragment(new MenuFragment());
+            }
+        }else{
+            replaceFragment(new MenuFragment());
+        }
     }
 
     @Override

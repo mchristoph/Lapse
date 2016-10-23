@@ -88,6 +88,22 @@ public class ConnectionFragment extends Fragment implements AdapterView.OnItemCl
         mLvRefresh.setOnRefreshListener(this);
         ((LapseApplication)getActivity().getApplication()).getConnectionManager().setWifiScanListener(this);
 
+        mImgDeviceInfo.setEnabled(true);
+        mTxtDeviceInfo.setEnabled(true);
+        mTxtDeviceInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onClickRefresh(view);
+            }
+        });
+        mImgDeviceInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onClickRefresh(view);
+            }
+        });
+
+
         searchDevices();
     }
 
@@ -200,8 +216,7 @@ public class ConnectionFragment extends Fragment implements AdapterView.OnItemCl
         searchDevices();
     }
 
-    @OnClick({R.id.img_device_info, R.id.txt_device_info})
-    public void onClickRefresh(){
+    public void onClickRefresh(View v){
         mTxtDeviceInfo.setVisibility(View.GONE);
         mImgDeviceInfo.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);

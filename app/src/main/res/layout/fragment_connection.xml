@@ -2,28 +2,7 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
-                tools:context=".LapseActivityFragment">
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:visibility="visible"
-        android:indeterminate="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_above="@+id/txt_search_info"
-        android:layout_centerHorizontal="true" />
-    <TextView
-        android:textSize="25dp"
-        android:visibility="visible"
-        android:clickable="false"
-        android:gravity="center"
-        android:text="@string/connection_info_searching_wifi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/txt_search_info" />
+                >
 
     <ImageView
         android:src="@drawable/ic_error"
@@ -45,6 +24,27 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:id="@+id/txt_device_info" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:visibility="visible"
+        android:indeterminate="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_above="@+id/txt_search_info"
+        android:layout_centerHorizontal="true" />
+    <TextView
+        android:textSize="25dp"
+        android:visibility="visible"
+        android:clickable="false"
+        android:gravity="center"
+        android:text="@string/connection_info_searching_wifi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/txt_search_info" />
 
     <android.support.v4.widget.SwipeRefreshLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
